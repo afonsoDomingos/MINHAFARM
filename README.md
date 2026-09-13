@@ -75,9 +75,7 @@ Isto criará:
 - 5 medicamentos diferentes
 - Preços e disponibilidade em ambas as farmácias
 
-Credenciais das farmácias de teste:
-- Email: `farmacia1@minhafarm.co.mz` / Password: `pharmacy123`
-- Email: `farmacia2@minhafarm.co.mz` / Password: `pharmacy123`
+📋 **Credenciais**: Veja o arquivo [CREDENTIALS.md](./CREDENTIALS.md) para todas as credenciais de teste e instruções detalhadas.
 
 7. Inicie o servidor de desenvolvimento:
 ```bash
