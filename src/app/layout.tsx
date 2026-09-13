@@ -13,6 +13,10 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "ConectLife - Encontre Medicamentos em Moçambique",
   description: "ConectLife: Encontrar o que precisa, quando precisa, onde precisa. Plataforma digital que conecta pessoas que procuram medicamentos com farmácias cadastradas em Moçambique.",
+  icons: {
+    icon: '/logominhafarm.png',
+    apple: '/logominhafarm.png',
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
