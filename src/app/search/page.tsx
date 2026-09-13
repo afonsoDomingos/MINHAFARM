@@ -83,17 +83,35 @@ function SearchContent() {
               </svg>
             </div>
             <h3 className="text-xl font-semibold text-gray-900 mb-2">
-              Nenhum medicamento encontrado
+              Medicamento não disponível
             </h3>
             <p className="text-gray-600 mb-4">
-              Tente pesquisar com outro nome ou verifique a ortografia
+              Este medicamento não está disponível nas farmácias cadastradas ou não existe no sistema.
             </p>
-            <Link
-              href="/"
-              className="text-green-600 hover:text-green-700 font-medium"
-            >
-              Voltar à página inicial
-            </Link>
+            <div className="space-y-2">
+              <p className="text-sm text-gray-500">
+                Possíveis motivos:
+              </p>
+              <ul className="text-sm text-gray-600 space-y-1">
+                <li>• O medicamento acabou nas farmácias</li>
+                <li>• O medicamento ainda não foi cadastrado no sistema</li>
+                <li>• Tente pesquisar pelo nome genérico do medicamento</li>
+              </ul>
+            </div>
+            <div className="mt-6 space-x-4">
+              <Link
+                href="/"
+                className="inline-block text-green-600 hover:text-green-700 font-medium"
+              >
+                Voltar à página inicial
+              </Link>
+              <Link
+                href="/pharmacies"
+                className="inline-block text-green-600 hover:text-green-700 font-medium"
+              >
+                Ver todas as farmácias
+              </Link>
+            </div>
           </div>
         )}
 

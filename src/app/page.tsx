@@ -3,15 +3,25 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { symptoms } from '@/data/symptoms';
 
 export default function HomePage() {
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedSymptom, setSelectedSymptom] = useState('');
   const router = useRouter();
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
       router.push(`/search?q=${encodeURIComponent(searchQuery)}`);
+    }
+  };
+
+  const handleSymptomSelect = (symptomId: string) => {
+    const symptom = symptoms.find((s) => s.id === symptomId);
+    if (symptom) {
+      setSearchQuery(symptom.suggestedMedicines[0]);
+      setSelectedSymptom(symptomId);
     }
   };
 
@@ -54,6 +64,26 @@ export default function HomePage() {
                 </button>
               </div>
             </form>
+
+            {/* Symptom Selector */}
+            <div className="mt-6 max-w-2xl mx-auto">
+              <p className="text-white/90 text-sm mb-3">Ou selecione o que está sentindo:</p>
+              <div className="flex flex-wrap gap-2 justify-center">
+                {symptoms.map((symptom) => (
+                  <button
+                    key={symptom.id}
+                    onClick={() => handleSymptomSelect(symptom.id)}
+                    className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                      selectedSymptom === symptom.id
+                        ? 'bg-white text-green-700'
+                        : 'bg-white/20 text-white hover:bg-white/30'
+                    }`}
+                  >
+                    {symptom.name}
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -95,6 +125,26 @@ export default function HomePage() {
                 </button>
               </div>
             </form>
+
+            {/* Symptom Selector */}
+            <div className="mt-6 max-w-2xl mx-auto">
+              <p className="text-white/90 text-sm mb-3">Ou selecione o que está sentindo:</p>
+              <div className="flex flex-wrap gap-2 justify-center">
+                {symptoms.map((symptom) => (
+                  <button
+                    key={symptom.id}
+                    onClick={() => handleSymptomSelect(symptom.id)}
+                    className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                      selectedSymptom === symptom.id
+                        ? 'bg-white text-green-700'
+                        : 'bg-white/20 text-white hover:bg-white/30'
+                    }`}
+                  >
+                    {symptom.name}
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </section>
