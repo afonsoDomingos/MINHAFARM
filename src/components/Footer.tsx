@@ -39,7 +39,7 @@ export default function Footer() {
             <h3 className="font-semibold text-gray-900 mb-4">Para Farmácias</h3>
             <ul className="space-y-2">
               <li>
-                <Link href="/pharmacy-register" className="text-gray-600 hover:text-green-600 text-sm">
+                <Link href="/register" className="text-gray-600 hover:text-green-600 text-sm">
                   Cadastrar Farmácia
                 </Link>
               </li>
