@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useCart } from '@/contexts/CartContext';
 import { useSession } from 'next-auth/react';
@@ -14,11 +14,25 @@ export default function CheckoutPage() {
   const [deliveryMethod, setDeliveryMethod] = useState<'pickup' | 'delivery'>('pickup');
   const [deliveryAddress, setDeliveryAddress] = useState('');
   const [notes, setNotes] = useState('');
+  const [mounted, setMounted] = useState(false);
 
   const pharmacyGroupedItems = getPharmacyGroupedItems();
 
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (mounted && items.length === 0) {
+      router.push('/cart');
+    }
+  }, [mounted, items.length, router]);
+
+  if (!mounted) {
+    return null;
+  }
+
   if (items.length === 0) {
-    router.push('/cart');
     return null;
   }
 
