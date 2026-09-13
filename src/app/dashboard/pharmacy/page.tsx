@@ -104,7 +104,7 @@ export default function PharmacyDashboard() {
           <>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">Medicamentos</h3>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">Produtos</h3>
                 {statsLoading ? (
                   <div className="flex items-center justify-center h-12">
                     <div className="inline-block animate-spin rounded-full h-6 w-6 border-b-2 border-green-600"></div>
@@ -148,7 +148,7 @@ export default function PharmacyDashboard() {
                     href="/dashboard/pharmacy/medicines"
                     className="block w-full text-left px-4 py-3 bg-green-50 text-green-700 rounded-lg hover:bg-green-100 transition-colors"
                   >
-                    + Adicionar Medicamento
+                    + Adicionar Produto
                   </Link>
                   <Link
                     href="/dashboard/pharmacy/orders"

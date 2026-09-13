@@ -8,7 +8,7 @@ export default function PharmacyDashboardNav() {
 
   const navItems = [
     { href: '/dashboard/pharmacy', label: 'Visão Geral', icon: '📊' },
-    { href: '/dashboard/pharmacy/medicines', label: 'Medicamentos', icon: '💊' },
+    { href: '/dashboard/pharmacy/medicines', label: 'Produtos', icon: '�' },
     { href: '/dashboard/pharmacy/orders', label: 'Pedidos', icon: '📋' },
     { href: '/dashboard/pharmacy/settings', label: 'Definições', icon: '⚙️' },
   ];
