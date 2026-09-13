@@ -22,10 +22,10 @@ export default function HomePage() {
         <div className="absolute inset-0 bg-gradient-to-r from-green-900/90 to-green-700/70"></div>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 h-full flex items-center">
           <div className="text-center w-full">
-            <h1 className="text-4xl md:text-6xl font-bold text-white mb-4">
+            <h1 className="text-4xl md:text-6xl font-bold text-white mb-4 drop-shadow-2xl">
               Encontre o seu medicamento perto de si
             </h1>
-            <p className="text-xl text-green-100 mb-8 max-w-2xl mx-auto">
+            <p className="text-xl text-green-100 mb-8 max-w-2xl mx-auto drop-shadow-lg">
               Pesquise medicamentos disponíveis nas farmácias cadastradas em Moçambique
             </p>
 
