@@ -22,7 +22,7 @@ export default function HomePage() {
         <div className="absolute inset-0 bg-black/20"></div>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center">
-            <img src="/MinhaFarm.png" alt="ConectLife Logo" className="h-24 w-auto mx-auto mb-8" />
+            <img src="/logominhafarm.png" alt="ConectLife Logo" className="h-24 w-auto mx-auto mb-8" />
             <h1 className="text-4xl md:text-6xl font-bold text-white mb-4">
               Encontre o seu medicamento perto de si
             </h1>
