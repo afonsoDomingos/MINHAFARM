@@ -7,8 +7,9 @@ import Order from '@/lib/models/Order';
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   try {
     const session = await getServerSession(authOptions);
 
@@ -43,7 +44,7 @@ export async function PATCH(
     }
 
     const order = await Order.findOne({
-      _id: params.id,
+      _id: id,
       pharmacyId: pharmacy._id,
     });
 

@@ -138,8 +138,8 @@ export default function AdminPharmaciesPage() {
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${statusColors[pharmacy.status]}`}>
-                        {statusLabels[pharmacy.status]}
+                      <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${statusColors[pharmacy.status as keyof typeof statusColors]}`}>
+                        {statusLabels[pharmacy.status as keyof typeof statusLabels]}
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">

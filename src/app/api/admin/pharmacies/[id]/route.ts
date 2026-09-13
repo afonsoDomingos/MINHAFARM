@@ -6,8 +6,9 @@ import Pharmacy from '@/lib/models/Pharmacy';
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   try {
     const session = await getServerSession(authOptions);
 
@@ -31,7 +32,7 @@ export async function PATCH(
     await connectDB();
 
     const pharmacy = await Pharmacy.findByIdAndUpdate(
-      params.id,
+      id,
       { status },
       { new: true }
     );

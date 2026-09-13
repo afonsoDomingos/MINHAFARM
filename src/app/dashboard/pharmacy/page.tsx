@@ -4,6 +4,7 @@ import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import PharmacyDashboardNav from '@/components/PharmacyDashboardNav';
+import { Fragment } from 'react';
 
 export default function PharmacyDashboard() {
   const { data: session, status } = useSession();
@@ -78,53 +79,55 @@ export default function PharmacyDashboard() {
         )}
 
         {pharmacy?.status === 'approved' && (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">Medicamentos</h3>
-              <p className="text-3xl font-bold text-green-600">0</p>
-              <p className="text-sm text-gray-600 mt-1">Cadastrados</p>
-            </div>
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">Medicamentos</h3>
+                <p className="text-3xl font-bold text-green-600">0</p>
+                <p className="text-sm text-gray-600 mt-1">Cadastrados</p>
+              </div>
 
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">Pedidos</h3>
-              <p className="text-3xl font-bold text-green-600">0</p>
-              <p className="text-sm text-gray-600 mt-1">Pendentes</p>
-            </div>
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">Pedidos</h3>
+                <p className="text-3xl font-bold text-green-600">0</p>
+                <p className="text-sm text-gray-600 mt-1">Pendentes</p>
+              </div>
 
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">Concluídos</h3>
-              <p className="text-3xl font-bold text-green-600">0</p>
-              <p className="text-sm text-gray-600 mt-1">Este mês</p>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Ações Rápidas</h3>
-              <div className="space-y-3">
-                <button className="w-full text-left px-4 py-3 bg-green-50 text-green-700 rounded-lg hover:bg-green-100 transition-colors">
-                  + Adicionar Medicamento
-                </button>
-                <button className="w-full text-left px-4 py-3 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors">
-                  📋 Ver Pedidos
-                </button>
-                <button className="w-full text-left px-4 py-3 bg-gray-50 text-gray-700 rounded-lg hover:bg-gray-100 transition-colors">
-                  ⚙️ Editar Informações
-                </button>
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">Concluídos</h3>
+                <p className="text-3xl font-bold text-green-600">0</p>
+                <p className="text-sm text-gray-600 mt-1">Este mês</p>
               </div>
             </div>
 
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Informações da Farmácia</h3>
-              <div className="space-y-2 text-sm">
-                <p><span className="font-medium">Endereço:</span> {pharmacy.address}</p>
-                <p><span className="font-medium">Bairro:</span> {pharmacy.neighborhood}</p>
-                <p><span className="font-medium">Cidade:</span> {pharmacy.city}</p>
-                <p><span className="font-medium">Telefone:</span> {pharmacy.phone}</p>
-                <p><span className="font-medium">Horário:</span> {pharmacy.openingHours}</p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">Ações Rápidas</h3>
+                <div className="space-y-3">
+                  <button className="w-full text-left px-4 py-3 bg-green-50 text-green-700 rounded-lg hover:bg-green-100 transition-colors">
+                    + Adicionar Medicamento
+                  </button>
+                  <button className="w-full text-left px-4 py-3 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors">
+                    📋 Ver Pedidos
+                  </button>
+                  <button className="w-full text-left px-4 py-3 bg-gray-50 text-gray-700 rounded-lg hover:bg-gray-100 transition-colors">
+                    ⚙️ Editar Informações
+                  </button>
+                </div>
+              </div>
+
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">Informações da Farmácia</h3>
+                <div className="space-y-2 text-sm">
+                  <p><span className="font-medium">Endereço:</span> {pharmacy.address}</p>
+                  <p><span className="font-medium">Bairro:</span> {pharmacy.neighborhood}</p>
+                  <p><span className="font-medium">Cidade:</span> {pharmacy.city}</p>
+                  <p><span className="font-medium">Telefone:</span> {pharmacy.phone}</p>
+                  <p><span className="font-medium">Horário:</span> {pharmacy.openingHours}</p>
+                </div>
               </div>
             </div>
-          </div>
+          </>
         )}
       </div>
     </div>

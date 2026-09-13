@@ -131,8 +131,8 @@ export default function UserDashboard() {
                   <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
                     <div className="flex-1">
                       <div className="flex items-center gap-3 mb-3">
-                        <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${statusColors[order.status]}`}>
-                          {statusLabels[order.status]}
+                        <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${statusColors[order.status as keyof typeof statusColors]}`}>
+                          {statusLabels[order.status as keyof typeof statusLabels]}
                         </span>
                         <span className="text-sm text-gray-500">
                           {new Date(order.createdAt).toLocaleDateString('pt-MZ')} às {new Date(order.createdAt).toLocaleTimeString('pt-MZ')}

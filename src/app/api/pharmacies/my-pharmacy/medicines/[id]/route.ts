@@ -7,8 +7,9 @@ import PharmacyMedicine from '@/lib/models/PharmacyMedicine';
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   try {
     const session = await getServerSession(authOptions);
 
@@ -36,7 +37,7 @@ export async function PATCH(
     }
 
     const pharmacyMedicine = await PharmacyMedicine.findOne({
-      _id: params.id,
+      _id: id,
       pharmacyId: pharmacy._id,
     });
 
@@ -69,8 +70,9 @@ export async function PATCH(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   try {
     const session = await getServerSession(authOptions);
 
@@ -95,7 +97,7 @@ export async function DELETE(
     }
 
     const pharmacyMedicine = await PharmacyMedicine.findOneAndDelete({
-      _id: params.id,
+      _id: id,
       pharmacyId: pharmacy._id,
     });
 

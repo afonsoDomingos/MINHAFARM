@@ -41,12 +41,15 @@ export async function POST(request: NextRequest) {
       }
 
       if (pharmacyMedicine.quantity < item.quantity) {
-        throw new Error(`Insufficient quantity for ${pharmacyMedicine.medicineId.name}`);
+        const medicineName = (pharmacyMedicine.medicineId as any)?.name || 'Medicine';
+        throw new Error(`Insufficient quantity for ${medicineName}`);
       }
+
+      const medicineName = (pharmacyMedicine.medicineId as any)?.name || 'Medicine';
 
       return {
         medicineId: item.medicineId,
-        medicineName: pharmacyMedicine.medicineId.name,
+        medicineName,
         quantity: item.quantity,
         price: pharmacyMedicine.price,
       };

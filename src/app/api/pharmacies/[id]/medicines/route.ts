@@ -5,13 +5,14 @@ import Medicine from '@/lib/models/Medicine';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   try {
     await connectDB();
 
     const pharmacyMedicines = await PharmacyMedicine.find({
-      pharmacyId: params.id,
+      pharmacyId: id,
     })
       .populate('medicineId')
       .sort({ 'medicineId.name': 1 });

@@ -4,13 +4,14 @@ import Pharmacy from '@/lib/models/Pharmacy';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   try {
     await connectDB();
 
     const pharmacy = await Pharmacy.findOne({
-      _id: params.id,
+      _id: id,
       status: 'approved',
     });
 
