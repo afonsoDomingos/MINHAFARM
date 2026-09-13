@@ -24,6 +24,11 @@ const Popup = dynamic(
   { ssr: false }
 );
 
+const Polyline = dynamic(
+  () => import('react-leaflet').then((mod) => mod.Polyline),
+  { ssr: false }
+);
+
 interface Pharmacy {
   _id: string;
   name: string;
@@ -54,6 +59,8 @@ export default function MapPage() {
   const [mapZoom, setMapZoom] = useState<number>(12);
   const [detectingLocation, setDetectingLocation] = useState(false);
   const [userAddress, setUserAddress] = useState<string>('');
+  const [routePath, setRoutePath] = useState<[number, number][]>([]);
+  const [calculatingRoute, setCalculatingRoute] = useState(false);
 
   useEffect(() => {
     fetchPharmacies();
@@ -202,6 +209,39 @@ export default function MapPage() {
     window.open(googleMapsUrl, '_blank');
   };
 
+  const calculateRouteOnMap = async (pharmacy: Pharmacy) => {
+    if (!userLocation || !pharmacy.location) return;
+
+    setCalculatingRoute(true);
+
+    try {
+      // Use OSRM (Open Source Routing Machine) - free, no API key needed
+      const response = await fetch(
+        `https://router.project-osrm.org/route/v1/driving/${userLocation[1]},${userLocation[0]};${pharmacy.location.coordinates[0]},${pharmacy.location.coordinates[1]}?overview=full&geometries=geojson`
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.routes && data.routes[0] && data.routes[0].geometry) {
+          const coordinates = data.routes[0].geometry.coordinates.map((coord: number[]) => [coord[1], coord[0]]);
+          setRoutePath(coordinates);
+        }
+      }
+    } catch (error) {
+      console.error('Error calculating route:', error);
+    } finally {
+      setCalculatingRoute(false);
+    }
+  };
+
+  const handleSelectPharmacy = (pharmacy: Pharmacy) => {
+    setSelectedPharmacy(pharmacy);
+    // Calculate route on map when pharmacy is selected
+    if (userLocation && pharmacy.location) {
+      calculateRouteOnMap(pharmacy);
+    }
+  };
+
   const filteredPharmacies = getFilteredPharmacies();
 
   const centerLocation = userLocation || [-25.9692, 32.5732];
@@ -328,9 +368,19 @@ export default function MapPage() {
                       <Popup>
                         <div className="text-center">
                           <p className="font-semibold">Sua Localização</p>
+                          {userAddress && <p className="text-sm text-gray-600 mt-1">{userAddress}</p>}
                         </div>
                       </Popup>
                     </Marker>
+                  )}
+
+                  {routePath.length > 0 && (
+                    <Polyline
+                      positions={routePath}
+                      color="#3b82f6"
+                      weight={5}
+                      opacity={0.7}
+                    />
                   )}
 
                   {filteredPharmacies.map((pharmacy) => {
@@ -344,10 +394,21 @@ export default function MapPage() {
                         ).toFixed(1)
                       : null;
 
+                    const isSelected = selectedPharmacy?._id === pharmacy._id;
+
+                    // Custom icon for selected pharmacy
+                    const selectedIcon = new (window as any).L.divIcon({
+                      className: 'custom-selected-marker',
+                      html: `<div style="background-color: #dc2626; border: 3px solid white; border-radius: 50%; width: 30px; height: 30px; box-shadow: 0 2px 5px rgba(0,0,0,0.3);"></div>`,
+                      iconSize: [30, 30],
+                      iconAnchor: [15, 15],
+                    });
+
                     return (
                       <Marker
                         key={pharmacy._id}
                         position={[pharmacy.location.coordinates[1], pharmacy.location.coordinates[0]]}
+                        icon={isSelected ? selectedIcon : undefined}
                       >
                         <Popup>
                           <div className="min-w-[200px]">
@@ -418,8 +479,10 @@ export default function MapPage() {
                     return (
                       <div
                         key={pharmacy._id}
-                        className="border border-gray-200 rounded-lg p-3 hover:bg-gray-50 transition-colors cursor-pointer"
-                        onClick={() => setSelectedPharmacy(pharmacy)}
+                        className={`border rounded-lg p-3 hover:bg-gray-50 transition-colors cursor-pointer ${
+                          selectedPharmacy?._id === pharmacy._id ? 'border-red-500 bg-red-50' : 'border-gray-200'
+                        }`}
+                        onClick={() => handleSelectPharmacy(pharmacy)}
                       >
                         <h3 className="font-medium text-gray-900 mb-1">{pharmacy.name}</h3>
                         <p className="text-sm text-gray-600 mb-1">{pharmacy.neighborhood}, {pharmacy.city}</p>
