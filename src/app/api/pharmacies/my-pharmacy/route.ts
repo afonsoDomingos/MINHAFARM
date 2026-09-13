@@ -50,7 +50,7 @@ export async function PATCH(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { name, address, neighborhood, city, phone, openingHours } = body;
+    const { name, address, neighborhood, city, phone, openingHours, logo } = body;
 
     await connectDB();
 
@@ -71,6 +71,7 @@ export async function PATCH(request: NextRequest) {
     if (city) pharmacy.city = city;
     if (phone) pharmacy.phone = phone;
     if (openingHours) pharmacy.openingHours = openingHours;
+    if (logo) pharmacy.logo = logo;
 
     await pharmacy.save();
 

@@ -16,6 +16,7 @@ export async function POST(request: NextRequest) {
       city,
       phone,
       openingHours,
+      logo,
     } = body;
 
     console.log('Pharmacy registration data:', body);
@@ -68,6 +69,7 @@ export async function POST(request: NextRequest) {
       city,
       phone,
       openingHours,
+      logo,
       userId: user._id,
       status: 'pending',
     });

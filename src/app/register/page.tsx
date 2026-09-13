@@ -27,6 +27,9 @@ export default function RegisterPage() {
   const [customOpeningHours, setCustomOpeningHours] = useState('');
   const [customNeighborhood, setCustomNeighborhood] = useState('');
   const [useCustomNeighborhood, setUseCustomNeighborhood] = useState(false);
+  const [logoFile, setLogoFile] = useState<File | null>(null);
+  const [logoUrl, setLogoUrl] = useState('');
+  const [uploadingLogo, setUploadingLogo] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -39,6 +42,37 @@ export default function RegisterPage() {
     setFormData({ ...formData, openingHours: value });
     if (value === '') {
       setCustomOpeningHours('');
+    }
+  };
+
+  const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setLogoFile(file);
+    setUploadingLogo(true);
+
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setError(data.error || 'Erro ao fazer upload do logo');
+        return;
+      }
+
+      setLogoUrl(data.url);
+    } catch (error) {
+      setError('Erro ao fazer upload do logo');
+    } finally {
+      setUploadingLogo(false);
     }
   };
 
@@ -155,6 +189,7 @@ export default function RegisterPage() {
           city: mozambiqueProvinces.find(p => p.id === formData.city)?.name || formData.city,
           phone: formData.phone,
           openingHours: formData.openingHours || customOpeningHours,
+          logo: logoUrl,
         };
 
         console.log('Sending registration data:', registrationData);
@@ -400,6 +435,35 @@ export default function RegisterPage() {
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-green-500 focus:border-green-500"
                         placeholder="Farmácia Central"
                       />
+                    </div>
+
+                    <div>
+                      <label htmlFor="logo" className="block text-sm font-medium text-gray-700 mb-1">
+                        Logo da Farmácia (opcional)
+                      </label>
+                      <div className="space-y-2">
+                        <input
+                          id="logo"
+                          name="logo"
+                          type="file"
+                          accept="image/jpeg,image/png,image/jpg,image/webp"
+                          onChange={handleLogoUpload}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-green-500 focus:border-green-500"
+                        />
+                        {uploadingLogo && (
+                          <p className="text-sm text-gray-600">A fazer upload...</p>
+                        )}
+                        {logoUrl && (
+                          <div className="flex items-center gap-2">
+                            <img
+                              src={logoUrl}
+                              alt="Logo preview"
+                              className="w-16 h-16 object-cover rounded-lg border border-gray-200"
+                            />
+                            <p className="text-sm text-green-600">Logo carregado com sucesso!</p>
+                          </div>
+                        )}
+                      </div>
                     </div>
 
                     <div>
