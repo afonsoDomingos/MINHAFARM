@@ -37,6 +37,7 @@ interface Pharmacy {
     coordinates: [number, number];
   };
   rating?: number;
+  isOpen?: boolean;
 }
 
 export default function MapPage() {
@@ -74,12 +75,33 @@ export default function MapPage() {
       const response = await fetch('/api/pharmacies');
       if (response.ok) {
         const data = await response.json();
-        setPharmacies(data);
+        const pharmaciesWithOpenStatus = data.map((pharmacy: Pharmacy) => ({
+          ...pharmacy,
+          isOpen: checkIfOpen(pharmacy.openingHours),
+        }));
+        setPharmacies(pharmaciesWithOpenStatus);
       }
     } catch (error) {
       console.error('Error fetching pharmacies:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const checkIfOpen = (openingHours: string): boolean => {
+    const now = new Date();
+    const currentHour = now.getHours();
+    const currentDay = now.getDay();
+
+    const isWeekday = currentDay >= 1 && currentDay <= 5;
+    const isSaturday = currentDay === 6;
+
+    if (isWeekday && currentHour >= 8 && currentHour < 20) {
+      return true;
+    } else if (isSaturday && currentHour >= 9 && currentHour < 13) {
+      return true;
+    } else {
+      return false;
     }
   };
 
@@ -253,12 +275,25 @@ export default function MapPage() {
                                 {distance} km de distância
                               </p>
                             )}
+                            <div className="flex flex-wrap gap-2 mb-3">
+                              {pharmacy.isOpen && (
+                                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                  🟢 Aberto
+                                </span>
+                              )}
+                            </div>
                             <div className="flex flex-col gap-2 mt-3">
-                              <button
-                                onClick={() => handleShowRoute(pharmacy)}
+                              <a
+                                href={`tel:${pharmacy.phone}`}
                                 className="inline-flex items-center justify-center px-3 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors"
                               >
-                                🗺️ Ver Rota no Google Maps
+                                📞 Ligar
+                              </a>
+                              <button
+                                onClick={() => handleShowRoute(pharmacy)}
+                                className="inline-flex items-center justify-center px-3 py-2 bg-purple-600 text-white text-sm rounded-lg hover:bg-purple-700 transition-colors"
+                              >
+                                🗺️ Ver Rota
                               </button>
                               <Link
                                 href={`/pharmacy/${pharmacy._id}`}
@@ -309,13 +344,27 @@ export default function MapPage() {
                             {distance} km
                           </p>
                         )}
+                        <div className="flex flex-wrap gap-1 mb-2">
+                          {pharmacy.isOpen && (
+                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                              🟢 Aberto
+                            </span>
+                          )}
+                        </div>
                         <div className="flex gap-2 mt-2">
+                          <a
+                            href={`tel:${pharmacy.phone}`}
+                            onClick={(e) => e.stopPropagation()}
+                            className="inline-flex items-center px-3 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                          >
+                            📞 Ligar
+                          </a>
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
                               handleShowRoute(pharmacy);
                             }}
-                            className="inline-flex items-center px-3 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                            className="inline-flex items-center px-3 py-1.5 text-sm bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
                           >
                             🗺️ Rota
                           </button>
@@ -367,16 +416,29 @@ export default function MapPage() {
                       <p className="text-sm text-gray-900">⭐ {selectedPharmacy.rating}/5</p>
                     </div>
                   )}
-                  {userLocation && selectedPharmacy.location && (
-                    <div className="pt-4 border-t border-gray-200">
+                  <div className="flex flex-wrap gap-2">
+                    {selectedPharmacy.isOpen && (
+                      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                        🟢 Aberto Agora
+                      </span>
+                    )}
+                  </div>
+                  <div className="pt-4 border-t border-gray-200 space-y-2">
+                    <a
+                      href={`tel:${selectedPharmacy.phone}`}
+                      className="w-full inline-flex items-center justify-center px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors"
+                    >
+                      📞 Ligar
+                    </a>
+                    {userLocation && selectedPharmacy.location && (
                       <button
                         onClick={() => handleShowRoute(selectedPharmacy)}
-                        className="w-full inline-flex items-center justify-center px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors"
+                        className="w-full inline-flex items-center justify-center px-4 py-2 bg-purple-600 text-white text-sm rounded-lg hover:bg-purple-700 transition-colors"
                       >
                         🗺️ Ver Rota no Google Maps
                       </button>
-                    </div>
-                  )}
+                    )}
+                  </div>
                 </div>
               </div>
             )}
