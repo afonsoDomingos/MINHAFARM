@@ -27,6 +27,9 @@ export default function Header() {
             <Link href="/pharmacies" className="text-gray-700 hover:text-green-600 transition-colors">
               Farmácias
             </Link>
+            <Link href="/map" className="text-gray-700 hover:text-green-600 transition-colors">
+              Mapa
+            </Link>
             <Link href="/how-it-works" className="text-gray-700 hover:text-green-600 transition-colors">
               Como Funciona
             </Link>

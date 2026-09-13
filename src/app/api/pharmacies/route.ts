@@ -7,7 +7,7 @@ export async function GET(request: NextRequest) {
     await connectDB();
 
     const pharmacies = await Pharmacy.find({ status: 'approved' })
-      .select('name address neighborhood city phone openingHours rating')
+      .select('name address neighborhood city phone openingHours rating location')
       .sort({ name: 1 });
 
     return NextResponse.json(pharmacies);
