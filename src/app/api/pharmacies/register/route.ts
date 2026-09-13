@@ -18,7 +18,10 @@ export async function POST(request: NextRequest) {
       openingHours,
     } = body;
 
+    console.log('Pharmacy registration data:', body);
+
     if (!pharmacyName || !email || !password || !address || !neighborhood || !city || !phone || !openingHours) {
+      console.log('Missing fields:', { pharmacyName, email, password, address, neighborhood, city, phone, openingHours });
       return NextResponse.json(
         { error: 'Todos os campos são obrigatórios' },
         { status: 400 }
