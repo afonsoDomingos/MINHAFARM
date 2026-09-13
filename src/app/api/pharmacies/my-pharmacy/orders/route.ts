@@ -36,7 +36,7 @@ export async function GET(request: NextRequest) {
 
     // For guest orders, populate guest information
     const ordersWithGuestInfo = orders.map(order => {
-      const orderObj = order.toObject();
+      const orderObj = order.toObject() as any;
       if (orderObj.isGuestOrder) {
         orderObj.user = {
           name: orderObj.guestName,
