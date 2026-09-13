@@ -61,10 +61,22 @@ export default function MapPage() {
   const [userAddress, setUserAddress] = useState<string>('');
   const [routePath, setRoutePath] = useState<[number, number][]>([]);
   const [calculatingRoute, setCalculatingRoute] = useState(false);
+  const [showScrollTop, setShowScrollTop] = useState(false);
 
   useEffect(() => {
     fetchPharmacies();
     getUserLocation();
+
+    const handleScroll = () => {
+      if (window.scrollY > 300) {
+        setShowScrollTop(true);
+      } else {
+        setShowScrollTop(false);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   useEffect(() => {
@@ -240,6 +252,13 @@ export default function MapPage() {
     if (userLocation && pharmacy.location) {
       calculateRouteOnMap(pharmacy);
     }
+  };
+
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
   };
 
   const filteredPharmacies = getFilteredPharmacies();
@@ -626,6 +645,18 @@ export default function MapPage() {
           </div>
         </div>
       </div>
+
+      {showScrollTop && (
+        <button
+          onClick={scrollToTop}
+          className="fixed bottom-8 right-8 bg-green-600 text-white p-3 rounded-full shadow-lg hover:bg-green-700 transition-all duration-300 z-50"
+          title="Voltar ao topo"
+        >
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
+          </svg>
+        </button>
+      )}
     </div>
   );
 }
