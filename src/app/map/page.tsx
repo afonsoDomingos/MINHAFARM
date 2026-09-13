@@ -67,16 +67,19 @@ export default function MapPage() {
     fetchPharmacies();
     getUserLocation();
 
-    const handleScroll = () => {
-      if (window.scrollY > 300) {
-        setShowScrollTop(true);
-      } else {
-        setShowScrollTop(false);
-      }
-    };
+    // Only add scroll listener on client side
+    if (typeof window !== 'undefined') {
+      const handleScroll = () => {
+        if (window.scrollY > 300) {
+          setShowScrollTop(true);
+        } else {
+          setShowScrollTop(false);
+        }
+      };
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+      window.addEventListener('scroll', handleScroll);
+      return () => window.removeEventListener('scroll', handleScroll);
+    }
   }, []);
 
   useEffect(() => {
@@ -105,6 +108,8 @@ export default function MapPage() {
           isOpen: checkIfOpen(pharmacy.openingHours),
         }));
         setPharmacies(pharmaciesWithOpenStatus);
+      } else {
+        console.error('Failed to fetch pharmacies:', response.statusText);
       }
     } catch (error) {
       console.error('Error fetching pharmacies:', error);
@@ -140,6 +145,12 @@ export default function MapPage() {
           },
         }
       );
+
+      if (!response.ok) {
+        console.error('Reverse geocoding failed:', response.statusText);
+        return;
+      }
+
       const data = await response.json();
 
       if (data && data.address) {
@@ -238,6 +249,8 @@ export default function MapPage() {
           const coordinates = data.routes[0].geometry.coordinates.map((coord: number[]) => [coord[1], coord[0]]);
           setRoutePath(coordinates);
         }
+      } else {
+        console.error('OSRM route calculation failed:', response.statusText);
       }
     } catch (error) {
       console.error('Error calculating route:', error);
