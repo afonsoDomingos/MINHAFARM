@@ -7,21 +7,28 @@ import { symptoms } from '@/data/symptoms';
 import { useCart } from '@/contexts/CartContext';
 import { productCategories } from '@/data/categories';
 
+interface PharmacyOption {
+  pharmacyId: string;
+  pharmacyName: string;
+  address: string;
+  neighborhood: string;
+  city: string;
+  price: number;
+  quantity: number;
+  available: boolean;
+  _id: string;
+  medicineId: string;
+}
+
 interface SearchResult {
   _id: string;
   medicineId: string;
   name: string;
   category?: string;
-  pharmacy: {
-    _id: string;
-    name: string;
-    address: string;
-    neighborhood: string;
-    city: string;
-  };
-  available: boolean;
-  price: number;
-  quantity: number;
+  pharmacies: PharmacyOption[];
+  lowestPrice: number;
+  highestPrice: number;
+  pharmacyCount: number;
 }
 
 function SearchContent() {
@@ -77,15 +84,15 @@ function SearchContent() {
     window.location.href = `/search?${params.toString()}`;
   };
 
-  const handleAddToCart = (result: SearchResult) => {
+  const handleAddToCart = (result: SearchResult, pharmacyOption: PharmacyOption) => {
     addToCart({
-      pharmacyId: result.pharmacy._id,
-      pharmacyName: result.pharmacy.name,
-      medicineId: result.medicineId || result._id,
+      pharmacyId: pharmacyOption.pharmacyId,
+      pharmacyName: pharmacyOption.pharmacyName,
+      medicineId: pharmacyOption.medicineId || pharmacyOption._id,
       medicineName: result.name,
-      price: result.price,
+      price: pharmacyOption.price,
     });
-    setToastMessage(`${result.name} adicionado ao carrinho`);
+    setToastMessage(`${result.name} adicionado ao carrinho de ${pharmacyOption.pharmacyName}`);
     setShowToast(true);
     setTimeout(() => setShowToast(false), 3000);
   };
@@ -269,66 +276,93 @@ function SearchContent() {
                 key={result._id}
                 className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow"
               >
-                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                  <div className="flex-1">
-                    <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                      {result.name}
-                    </h3>
-                    <div className="space-y-1">
-                      <p className="text-gray-600">
-                        <span className="font-medium">Farmácia:</span> {result.pharmacy.name}
-                      </p>
-                      <p className="text-gray-600">
-                        <span className="font-medium">Localização:</span> {result.pharmacy.neighborhood}, {result.pharmacy.city}
-                      </p>
-                      <p className="text-gray-600">
-                        <span className="font-medium">Endereço:</span> {result.pharmacy.address}
-                      </p>
-                      {result.category && (
-                        <p className="text-gray-600">
-                          <span className="font-medium">Categoria:</span> {result.category}
-                        </p>
+                <div className="mb-4">
+                  <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                    {result.name}
+                  </h3>
+                  {result.category && (
+                    <p className="text-sm text-gray-600">
+                      <span className="font-medium">Categoria:</span> {result.category}
+                    </p>
+                  )}
+                  <div className="mt-3 flex items-center gap-4">
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm text-gray-600">Preço:</span>
+                      <span className="text-lg font-bold text-green-600">
+                        {result.lowestPrice.toLocaleString('pt-MZ')} MT
+                      </span>
+                      {result.lowestPrice !== result.highestPrice && (
+                        <span className="text-sm text-gray-500">
+                          - {result.highestPrice.toLocaleString('pt-MZ')} MT
+                        </span>
                       )}
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm text-gray-600">Disponível em:</span>
+                      <span className="text-sm font-semibold text-gray-900">
+                        {result.pharmacyCount} {result.pharmacyCount === 1 ? 'farmácia' : 'farmácias'}
+                      </span>
                     </div>
                   </div>
+                </div>
 
-                  <div className="flex flex-col items-start md:items-end gap-3">
-                    <div className="flex items-center gap-2">
-                      {result.available ? (
-                        <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
-                          ✓ Disponível
-                        </span>
-                      ) : (
-                        <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800">
-                          ✕ Indisponível
-                        </span>
-                      )}
-                    </div>
-
-                    {result.available && (
-                      <>
-                        <p className="text-2xl font-bold text-gray-900">
-                          {result.price.toLocaleString('pt-MZ')} MT
-                        </p>
-                        <p className="text-sm text-gray-600">
-                          Quantidade: {result.quantity}
-                        </p>
-                        <div className="flex gap-2">
-                          <Link
-                            href={`/pharmacy/${result.pharmacy._id}`}
-                            className="inline-flex items-center px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
-                          >
-                            Ver Farmácia
-                          </Link>
-                          <button
-                            onClick={() => handleAddToCart(result)}
-                            className="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
-                          >
-                            Adicionar ao Pedido
-                          </button>
+                <div className="border-t border-gray-200 pt-4">
+                  <p className="text-sm font-medium text-gray-700 mb-3">Comparação de Preços:</p>
+                  <div className="space-y-3">
+                    {result.pharmacies.map((pharmacy, index) => (
+                      <div
+                        key={pharmacy.pharmacyId}
+                        className={`flex flex-col md:flex-row md:items-center md:justify-between gap-3 p-3 rounded-lg ${
+                          index === 0 ? 'bg-green-50 border border-green-200' : 'bg-gray-50'
+                        }`}
+                      >
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2">
+                            {index === 0 && (
+                              <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-600 text-white">
+                                Menor Preço
+                              </span>
+                            )}
+                            <p className="font-medium text-gray-900">{pharmacy.pharmacyName}</p>
+                          </div>
+                          <p className="text-sm text-gray-600">
+                            {pharmacy.neighborhood}, {pharmacy.city}
+                          </p>
+                          <p className="text-sm text-gray-500">{pharmacy.address}</p>
                         </div>
-                      </>
-                    )}
+
+                        <div className="flex flex-col items-start md:items-end gap-2">
+                          {pharmacy.available ? (
+                            <>
+                              <p className={`text-xl font-bold ${index === 0 ? 'text-green-600' : 'text-gray-900'}`}>
+                                {pharmacy.price.toLocaleString('pt-MZ')} MT
+                              </p>
+                              <p className="text-sm text-gray-600">
+                                Quantidade: {pharmacy.quantity}
+                              </p>
+                              <div className="flex gap-2">
+                                <Link
+                                  href={`/pharmacy/${pharmacy.pharmacyId}`}
+                                  className="inline-flex items-center px-3 py-1.5 text-sm bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
+                                >
+                                  Ver Farmácia
+                                </Link>
+                                <button
+                                  onClick={() => handleAddToCart(result, pharmacy)}
+                                  className="inline-flex items-center px-3 py-1.5 text-sm bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                                >
+                                  Adicionar
+                                </button>
+                              </div>
+                            </>
+                          ) : (
+                            <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800">
+                              Indisponível
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
               </div>

@@ -70,7 +70,41 @@ export async function GET(request: NextRequest) {
         };
       });
 
-    return NextResponse.json(results);
+    // Group results by medicine name for price comparison
+    const groupedResults: Record<string, any[]> = {};
+    results.forEach((result) => {
+      const key = result.name.toLowerCase();
+      if (!groupedResults[key]) {
+        groupedResults[key] = [];
+      }
+      groupedResults[key].push(result);
+    });
+
+    // Convert to array and sort by lowest price first
+    const comparisonResults = Object.values(groupedResults).map((group) => {
+      // Sort group by price (lowest first)
+      group.sort((a, b) => a.price - b.price);
+      return {
+        ...group[0], // Use first item as base
+        pharmacies: group.map((item) => ({
+          pharmacyId: item.pharmacy._id,
+          pharmacyName: item.pharmacy.name,
+          address: item.pharmacy.address,
+          neighborhood: item.pharmacy.neighborhood,
+          city: item.pharmacy.city,
+          price: item.price,
+          quantity: item.quantity,
+          available: item.available,
+          _id: item._id,
+          medicineId: item.medicineId,
+        })),
+        lowestPrice: group[0].price,
+        highestPrice: group[group.length - 1].price,
+        pharmacyCount: group.length,
+      };
+    });
+
+    return NextResponse.json(comparisonResults);
   } catch (error) {
     console.error('Error searching medicines:', error);
     return NextResponse.json(
