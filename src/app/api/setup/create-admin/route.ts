@@ -1,31 +1,20 @@
-import mongoose from 'mongoose';
+import { NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
-import dotenv from 'dotenv';
+import connectDB from '@/lib/db/mongoose';
+import User from '@/lib/models/User';
+import Medicine from '@/lib/models/Medicine';
 
-dotenv.config({ path: '.env.local' });
-
-import User from '../src/lib/models/User';
-import Pharmacy from '../src/lib/models/Pharmacy';
-import Medicine from '../src/lib/models/Medicine';
-import PharmacyMedicine from '../src/lib/models/PharmacyMedicine';
-import Order from '../src/lib/models/Order';
-
-const MONGODB_URI = process.env.MONGODB_URI;
-
-async function createAdmin() {
+export async function POST() {
   try {
-    if (!MONGODB_URI) {
-      throw new Error('MONGODB_URI is not defined');
-    }
-
-    await mongoose.connect(MONGODB_URI);
-    console.log('Connected to MongoDB');
+    await connectDB();
 
     // Check if admin already exists
     const existingAdmin = await User.findOne({ email: 'admin@minhafarm.co.mz' });
     if (existingAdmin) {
-      console.log('Admin user already exists');
-      return;
+      return NextResponse.json(
+        { error: 'Admin user already exists' },
+        { status: 400 }
+      );
     }
 
     // Create admin user
@@ -36,11 +25,6 @@ async function createAdmin() {
       password: hashedPassword,
       role: 'admin',
     });
-
-    console.log('Admin user created successfully');
-    console.log('Email: admin@minhafarm.co.mz');
-    console.log('Password: admin123');
-    console.log('Please change the password after first login!');
 
     // Create some sample medicines
     const medicines = await Medicine.create([
@@ -70,13 +54,19 @@ async function createAdmin() {
       },
     ]);
 
-    console.log('Sample medicines created');
-
-  } catch (error) {
+    return NextResponse.json({
+      success: true,
+      message: 'Admin and sample medicines created successfully',
+      admin: {
+        email: admin.email,
+        password: 'admin123',
+      },
+    });
+  } catch (error: any) {
     console.error('Error creating admin:', error);
-  } finally {
-    await mongoose.disconnect();
+    return NextResponse.json(
+      { error: error.message || 'Error creating admin' },
+      { status: 500 }
+    );
   }
 }
-
-createAdmin();
