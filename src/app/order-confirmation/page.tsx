@@ -92,7 +92,6 @@ function OrderConfirmationContent() {
         </div>
       </div>
     </div>
-    );
   );
 }
 
