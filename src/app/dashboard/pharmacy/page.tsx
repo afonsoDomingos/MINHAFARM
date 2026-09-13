@@ -16,6 +16,7 @@ export default function PharmacyDashboard() {
     completedOrders: 0,
   });
   const [loading, setLoading] = useState(true);
+  const [statsLoading, setStatsLoading] = useState(true);
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -43,6 +44,7 @@ export default function PharmacyDashboard() {
   };
 
   const fetchStats = async () => {
+    setStatsLoading(true);
     try {
       const response = await fetch('/api/pharmacies/my-pharmacy/stats');
       if (response.ok) {
@@ -51,6 +53,8 @@ export default function PharmacyDashboard() {
       }
     } catch (error) {
       console.error('Error fetching stats:', error);
+    } finally {
+      setStatsLoading(false);
     }
   };
 
@@ -101,19 +105,37 @@ export default function PharmacyDashboard() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">Medicamentos</h3>
-                <p className="text-3xl font-bold text-green-600">{stats.totalMedicines}</p>
+                {statsLoading ? (
+                  <div className="flex items-center justify-center h-12">
+                    <div className="inline-block animate-spin rounded-full h-6 w-6 border-b-2 border-green-600"></div>
+                  </div>
+                ) : (
+                  <p className="text-3xl font-bold text-green-600">{stats.totalMedicines}</p>
+                )}
                 <p className="text-sm text-gray-600 mt-1">Cadastrados</p>
               </div>
 
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">Pedidos</h3>
-                <p className="text-3xl font-bold text-green-600">{stats.pendingOrders}</p>
+                {statsLoading ? (
+                  <div className="flex items-center justify-center h-12">
+                    <div className="inline-block animate-spin rounded-full h-6 w-6 border-b-2 border-green-600"></div>
+                  </div>
+                ) : (
+                  <p className="text-3xl font-bold text-green-600">{stats.pendingOrders}</p>
+                )}
                 <p className="text-sm text-gray-600 mt-1">Pendentes</p>
               </div>
 
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">Concluídos</h3>
-                <p className="text-3xl font-bold text-green-600">{stats.completedOrders}</p>
+                {statsLoading ? (
+                  <div className="flex items-center justify-center h-12">
+                    <div className="inline-block animate-spin rounded-full h-6 w-6 border-b-2 border-green-600"></div>
+                  </div>
+                ) : (
+                  <p className="text-3xl font-bold text-green-600">{stats.completedOrders}</p>
+                )}
                 <p className="text-sm text-gray-600 mt-1">Este mês</p>
               </div>
             </div>
