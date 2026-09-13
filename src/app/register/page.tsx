@@ -146,25 +146,36 @@ export default function RegisterPage() {
 
         router.push('/login?registered=true');
       } else {
+        const registrationData = {
+          pharmacyName: formData.pharmacyName,
+          email: formData.email,
+          password: formData.password,
+          address: formData.address,
+          neighborhood: formData.neighborhood,
+          city: mozambiqueProvinces.find(p => p.id === formData.city)?.name || formData.city,
+          phone: formData.phone,
+          openingHours: formData.openingHours || customOpeningHours,
+        };
+
+        console.log('Sending registration data:', registrationData);
+
         const response = await fetch('/api/pharmacies/register', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            pharmacyName: formData.pharmacyName,
-            email: formData.email,
-            password: formData.password,
-            address: formData.address,
-            neighborhood: formData.neighborhood,
-            city: mozambiqueProvinces.find(p => p.id === formData.city)?.name || formData.city,
-            phone: formData.phone,
-            openingHours: formData.openingHours || customOpeningHours,
-          }),
+          body: JSON.stringify(registrationData),
         });
 
+        console.log('Response status:', response.status);
+        console.log('Response ok:', response.ok);
+
         const data = await response.json();
+        console.log('Response data:', data);
 
         if (!response.ok) {
-          setError(data.error || 'Erro ao registar farmácia');
+          const errorMessage = data.error || 'Erro ao registar farmácia';
+          const errorDetails = data.details ? ` (${data.details})` : '';
+          setError(errorMessage + errorDetails);
+          console.error('Registration error:', data);
           return;
         }
 
