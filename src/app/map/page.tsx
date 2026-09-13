@@ -44,7 +44,7 @@ export default function MapPage() {
   const [pharmacies, setPharmacies] = useState<Pharmacy[]>([]);
   const [loading, setLoading] = useState(true);
   const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
-  const [filterRadius, setFilterRadius] = useState<number>(5);
+  const [filterRadius, setFilterRadius] = useState<number>(25);
   const [selectedPharmacy, setSelectedPharmacy] = useState<Pharmacy | null>(null);
   const [routeToPharmacy, setRouteToPharmacy] = useState<Pharmacy | null>(null);
   const [routeDistance, setRouteDistance] = useState<string>('');
