@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { mozambiqueProvinces, neighborhoodsByProvince, openingHoursOptions } from '@/data/locations';
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -20,14 +21,23 @@ export default function RegisterPage() {
     phone: '',
     address: '',
     neighborhood: '',
-    city: 'Maputo',
+    city: '',
     openingHours: '',
   });
+  const [customOpeningHours, setCustomOpeningHours] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleOpeningHoursChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const value = e.target.value;
+    setFormData({ ...formData, openingHours: value });
+    if (value === '') {
+      setCustomOpeningHours('');
+    }
   };
 
   const validateStep = () => {
@@ -140,9 +150,9 @@ export default function RegisterPage() {
             password: formData.password,
             address: formData.address,
             neighborhood: formData.neighborhood,
-            city: formData.city,
+            city: mozambiqueProvinces.find(p => p.id === formData.city)?.name || formData.city,
             phone: formData.phone,
-            openingHours: formData.openingHours,
+            openingHours: formData.openingHours || customOpeningHours,
           }),
         });
 
@@ -393,42 +403,48 @@ export default function RegisterPage() {
                     </div>
 
                     <div>
-                      <label htmlFor="neighborhood" className="block text-sm font-medium text-gray-700 mb-1">
-                        Bairro *
-                      </label>
-                      <input
-                        id="neighborhood"
-                        name="neighborhood"
-                        type="text"
-                        required
-                        value={formData.neighborhood}
-                        onChange={handleChange}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-green-500 focus:border-green-500"
-                        placeholder="Sommerschield"
-                      />
-                    </div>
-
-                    <div>
                       <label htmlFor="city" className="block text-sm font-medium text-gray-700 mb-1">
-                        Cidade *
+                        Cidade/Província *
                       </label>
                       <select
                         id="city"
                         name="city"
                         required
                         value={formData.city}
-                        onChange={handleChange}
+                        onChange={(e) => {
+                          handleChange(e);
+                          setFormData({ ...formData, city: e.target.value, neighborhood: '' });
+                        }}
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-green-500 focus:border-green-500"
                       >
-                        <option value="Maputo">Maputo</option>
-                        <option value="Matola">Matola</option>
-                        <option value="Beira">Beira</option>
-                        <option value="Nampula">Nampula</option>
-                        <option value="Quelimane">Quelimane</option>
-                        <option value="Tete">Tete</option>
-                        <option value="Chimoio">Chimoio</option>
-                        <option value="Pemba">Pemba</option>
-                        <option value="Xai-Xai">Xai-Xai</option>
+                        <option value="">Selecione a cidade</option>
+                        {mozambiqueProvinces.map((province) => (
+                          <option key={province.id} value={province.id}>
+                            {province.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div>
+                      <label htmlFor="neighborhood" className="block text-sm font-medium text-gray-700 mb-1">
+                        Bairro *
+                      </label>
+                      <select
+                        id="neighborhood"
+                        name="neighborhood"
+                        required
+                        value={formData.neighborhood}
+                        onChange={handleChange}
+                        disabled={!formData.city}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-green-500 focus:border-green-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
+                      >
+                        <option value="">Selecione primeiro a cidade</option>
+                        {formData.city && neighborhoodsByProvince[formData.city]?.map((neighborhood) => (
+                          <option key={neighborhood} value={neighborhood}>
+                            {neighborhood}
+                          </option>
+                        ))}
                       </select>
                     </div>
 
@@ -436,16 +452,31 @@ export default function RegisterPage() {
                       <label htmlFor="openingHours" className="block text-sm font-medium text-gray-700 mb-1">
                         Horário de Funcionamento *
                       </label>
-                      <input
+                      <select
                         id="openingHours"
                         name="openingHours"
-                        type="text"
                         required
                         value={formData.openingHours}
-                        onChange={handleChange}
+                        onChange={handleOpeningHoursChange}
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-green-500 focus:border-green-500"
-                        placeholder="Seg-Sex: 8h-20h, Sáb: 9h-18h"
-                      />
+                      >
+                        <option value="">Selecione o horário</option>
+                        {openingHoursOptions.map((option) => (
+                          <option key={option.id} value={option.value}>
+                            {option.label}
+                          </option>
+                        ))}
+                      </select>
+                      {formData.openingHours === '' && (
+                        <input
+                          type="text"
+                          value={customOpeningHours}
+                          onChange={(e) => setCustomOpeningHours(e.target.value)}
+                          onBlur={(e) => setFormData({ ...formData, openingHours: e.target.value })}
+                          className="mt-2 w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-green-500 focus:border-green-500"
+                          placeholder="Digite o horário personalizado (ex: Seg-Sex: 8h-20h)"
+                        />
+                      )}
                     </div>
                   </>
                 )}
