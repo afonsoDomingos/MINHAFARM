@@ -17,7 +17,10 @@ export default function PharmacySettingsPage() {
     city: '',
     phone: '',
     openingHours: '',
+    latitude: '',
+    longitude: '',
   });
+  const [detectingLocation, setDetectingLocation] = useState(false);
 
   useEffect(() => {
     fetchPharmacyData();
@@ -36,6 +39,8 @@ export default function PharmacySettingsPage() {
           city: data.city,
           phone: data.phone,
           openingHours: data.openingHours,
+          latitude: data.location?.coordinates[1] || '',
+          longitude: data.location?.coordinates[0] || '',
         });
       }
     } catch (error) {
@@ -51,10 +56,30 @@ export default function PharmacySettingsPage() {
     setMessage('');
 
     try {
+      const location = formData.latitude && formData.longitude
+        ? {
+            type: 'Point' as const,
+            coordinates: [parseFloat(formData.longitude), parseFloat(formData.latitude)],
+          }
+        : undefined;
+
+      const dataToSend: any = {
+        name: formData.name,
+        address: formData.address,
+        neighborhood: formData.neighborhood,
+        city: formData.city,
+        phone: formData.phone,
+        openingHours: formData.openingHours,
+      };
+
+      if (location) {
+        dataToSend.location = location;
+      }
+
       const response = await fetch('/api/pharmacies/my-pharmacy', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(dataToSend),
       });
 
       if (response.ok) {
@@ -68,6 +93,32 @@ export default function PharmacySettingsPage() {
     } finally {
       setSaving(false);
     }
+  };
+
+  const handleDetectLocation = () => {
+    if (!navigator.geolocation) {
+      setMessage('Seu navegador não suporta geolocalização.');
+      return;
+    }
+
+    setDetectingLocation(true);
+    setMessage('');
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setFormData({
+          ...formData,
+          latitude: position.coords.latitude.toString(),
+          longitude: position.coords.longitude.toString(),
+        });
+        setDetectingLocation(false);
+        setMessage('Localização detectada com sucesso!');
+      },
+      (error) => {
+        setDetectingLocation(false);
+        setMessage('Erro ao detectar localização. Verifique as permissões do navegador.');
+      }
+    );
   };
 
   if (loading) {
@@ -191,6 +242,86 @@ export default function PharmacySettingsPage() {
                 required
                 placeholder="Seg-Sex: 8h-20h, Sáb: 9h-13h"
               />
+            </div>
+
+            <div className="border-t border-gray-200 pt-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Localização no Mapa</h3>
+              <p className="text-sm text-gray-600 mb-4">
+                Defina a localização da sua farmácia para aparecer no mapa interativo. Isso ajuda os clientes a encontrá-la.
+              </p>
+
+              <div className="flex items-center gap-4 mb-4">
+                <button
+                  type="button"
+                  onClick={handleDetectLocation}
+                  disabled={detectingLocation}
+                  className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {detectingLocation ? (
+                    <>
+                      <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      A detectar...
+                    </>
+                  ) : (
+                    <>
+                      <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                      </svg>
+                      Detectar Minha Localização
+                    </>
+                  )}
+                </button>
+                <span className="text-sm text-gray-500">
+                  Ou insira manualmente as coordenadas abaixo
+                </span>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label htmlFor="latitude" className="block text-sm font-medium text-gray-700 mb-1">
+                    Latitude
+                  </label>
+                  <input
+                    type="number"
+                    id="latitude"
+                    step="any"
+                    value={formData.latitude}
+                    onChange={(e) => setFormData({ ...formData, latitude: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-green-500 focus:border-green-500"
+                    placeholder="-25.9692"
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="longitude" className="block text-sm font-medium text-gray-700 mb-1">
+                    Longitude
+                  </label>
+                  <input
+                    type="number"
+                    id="longitude"
+                    step="any"
+                    value={formData.longitude}
+                    onChange={(e) => setFormData({ ...formData, longitude: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-green-500 focus:border-green-500"
+                    placeholder="32.5732"
+                  />
+                </div>
+              </div>
+
+              {formData.latitude && formData.longitude && (
+                <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-lg">
+                  <p className="text-sm text-green-800">
+                    ✓ Localização definida: {formData.latitude}, {formData.longitude}
+                  </p>
+                  <p className="text-xs text-green-600 mt-1">
+                    Sua farmácia aparecerá no mapa após salvar.
+                  </p>
+                </div>
+              )}
             </div>
 
             <div className="flex justify-end">
