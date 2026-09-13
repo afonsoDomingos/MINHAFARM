@@ -100,7 +100,13 @@ export default function CheckoutPage() {
 
       if (responses.every((res) => res.ok)) {
         clearCart();
-        router.push('/dashboard/user?order_placed=true');
+        const params = new URLSearchParams();
+        params.set('delivery', deliveryMethod);
+        params.set('total', totalWithDelivery.toString());
+        if (!session) {
+          params.set('guest', 'true');
+        }
+        router.push(`/order-confirmation?${params.toString()}`);
       } else {
         setError('Erro ao criar pedido. Tente novamente.');
       }
