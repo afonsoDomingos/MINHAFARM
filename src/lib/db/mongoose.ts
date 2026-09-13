@@ -1,7 +1,12 @@
 import mongoose from 'mongoose';
 
 // Import all models to ensure they are registered before any database operations
-import '@/lib/models';
+// After schema changes, models need to be re-registered
+import '@/lib/models/User';
+import '@/lib/models/Pharmacy';
+import '@/lib/models/Medicine';
+import '@/lib/models/PharmacyMedicine';
+import '@/lib/models/Order';
 
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/conectlife';
 
