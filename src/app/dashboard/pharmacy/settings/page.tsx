@@ -19,8 +19,10 @@ export default function PharmacySettingsPage() {
     openingHours: '',
     latitude: '',
     longitude: '',
+    googleMapsLink: '',
   });
   const [detectingLocation, setDetectingLocation] = useState(false);
+  const [parsingLink, setParsingLink] = useState(false);
 
   useEffect(() => {
     fetchPharmacyData();
@@ -41,6 +43,7 @@ export default function PharmacySettingsPage() {
           openingHours: data.openingHours,
           latitude: data.location?.coordinates[1] || '',
           longitude: data.location?.coordinates[0] || '',
+          googleMapsLink: '',
         });
       }
     } catch (error) {
@@ -110,6 +113,7 @@ export default function PharmacySettingsPage() {
           ...formData,
           latitude: position.coords.latitude.toString(),
           longitude: position.coords.longitude.toString(),
+          googleMapsLink: formData.googleMapsLink,
         });
         setDetectingLocation(false);
         setMessage('Localização detectada com sucesso!');
@@ -119,6 +123,58 @@ export default function PharmacySettingsPage() {
         setMessage('Erro ao detectar localização. Verifique as permissões do navegador.');
       }
     );
+  };
+
+  const parseGoogleMapsLink = (link: string) => {
+    setParsingLink(true);
+    setMessage('');
+
+    try {
+      let lat: number | null = null;
+      let lng: number | null = null;
+
+      // Try different Google Maps URL formats
+      // Format 1: @lat,lng,z
+      const atMatch = link.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
+      if (atMatch) {
+        lat = parseFloat(atMatch[1]);
+        lng = parseFloat(atMatch[2]);
+      }
+
+      // Format 2: q=lat,lng
+      if (!lat) {
+        const qMatch = link.match(/[?&]q=(-?\d+\.\d+),(-?\d+\.\d+)/);
+        if (qMatch) {
+          lat = parseFloat(qMatch[1]);
+          lng = parseFloat(qMatch[2]);
+        }
+      }
+
+      // Format 3: /lat,lng
+      if (!lat) {
+        const pathMatch = link.match(/\/(-?\d+\.\d+),(-?\d+\.\d+)/);
+        if (pathMatch) {
+          lat = parseFloat(pathMatch[1]);
+          lng = parseFloat(pathMatch[2]);
+        }
+      }
+
+      if (lat && lng) {
+        setFormData({
+          ...formData,
+          latitude: lat.toString(),
+          longitude: lng.toString(),
+          googleMapsLink: formData.googleMapsLink,
+        });
+        setMessage('Coordenadas extraídas do link do Google Maps com sucesso!');
+      } else {
+        setMessage('Não foi possível extrair coordenadas do link. Verifique se o link está correto.');
+      }
+    } catch (error) {
+      setMessage('Erro ao processar o link. Verifique se está correto.');
+    } finally {
+      setParsingLink(false);
+    }
   };
 
   if (loading) {
@@ -310,6 +366,48 @@ export default function PharmacySettingsPage() {
                     placeholder="32.5732"
                   />
                 </div>
+              </div>
+
+              <div className="mt-4 pt-4 border-t border-gray-200">
+                <label htmlFor="googleMapsLink" className="block text-sm font-medium text-gray-700 mb-1">
+                  Link do Google Maps (opcional)
+                </label>
+                <input
+                  type="url"
+                  id="googleMapsLink"
+                  value={formData.googleMapsLink}
+                  onChange={(e) => setFormData({ ...formData, googleMapsLink: e.target.value })}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-green-500 focus:border-green-500"
+                  placeholder="https://maps.google.com/?q=-25.9692,32.5732"
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  Cole o link do Google Maps da sua localização para extrair coordenadas automaticamente
+                </p>
+                {formData.googleMapsLink && (
+                  <button
+                    type="button"
+                    onClick={() => parseGoogleMapsLink(formData.googleMapsLink)}
+                    disabled={parsingLink}
+                    className="mt-2 inline-flex items-center px-4 py-2 bg-purple-600 text-white text-sm rounded-lg hover:bg-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {parsingLink ? (
+                      <>
+                        <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        A processar...
+                      </>
+                    ) : (
+                      <>
+                        <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                        </svg>
+                        Extrair Coordenadas do Link
+                      </>
+                    )}
+                  </button>
+                )}
               </div>
 
               {formData.latitude && formData.longitude && (
