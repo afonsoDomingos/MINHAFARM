@@ -1,22 +1,22 @@
-# CREDENCIAIS DE TESTE - MINHAFARM
+# CREDENCIAIS DE TESTE - ConectLife
 
 ## 🔐 Credenciais de Acesso
 
 ### 👤 Administrador
-- **Email**: `admin@minhafarm.co.mz`
+- **Email**: `admin@conectlife.co.mz`
 - **Password**: `admin123`
 - **Painel**: `/dashboard/admin`
 - **Funções**: Aprovar farmácias, ver estatísticas, gerir plataforma
 
 ### 🏥 Farmácia Central
-- **Email**: `farmacia1@minhafarm.co.mz`
+- **Email**: `farmacia1@conectlife.co.mz`
 - **Password**: `pharmacy123`
 - **Painel**: `/dashboard/pharmacy`
 - **Localização**: Sommerschield, Maputo
 - **Telefone**: +258 84 123 4567
 
 ### 🏥 Farmácia São João
-- **Email**: `farmacia2@minhafarm.co.mz`
+- **Email**: `farmacia2@conectlife.co.mz`
 - **Password**: `pharmacy123`
 - **Painel**: `/dashboard/pharmacy`
 - **Localização**: Polana, Maputo
@@ -73,7 +73,7 @@
 ### 1. Login como Admin
 1. Aceda a http://localhost:3000
 2. Clique em "Entrar"
-3. Use: `admin@minhafarm.co.mz` / `admin123`
+3. Use: `admin@conectlife.co.mz` / `admin123`
 4. Aceda ao painel administrativo
 5. Pode aprovar farmácias manualmente
 
@@ -85,7 +85,7 @@
 
 ### 3. Login como Farmácia
 1. Aceda a http://localhost:3000/pharmacy-login
-2. Use: `farmacia1@minhafarm.co.mz` / `pharmacy123` (após seed-data)
+2. Use: `farmacia1@conectlife.co.mz` / `pharmacy123` (após seed-data)
 3. Ou use credenciais da farmácia que registrou
 4. Adicione medicamentos manualmente no painel
 

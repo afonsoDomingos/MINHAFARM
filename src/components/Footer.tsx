@@ -7,7 +7,7 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
             <div className="flex items-center mb-4">
-              <img src="/MinhaFarm.png" alt="MINHAFARM Logo" className="h-10 w-auto" />
+              <img src="/MinhaFarm.png" alt="ConectLife Logo" className="h-10 w-auto" />
             </div>
             <p className="text-gray-600 text-sm">
               Encontre medicamentos disponíveis nas farmácias cadastradas em Moçambique.
@@ -75,7 +75,7 @@ export default function Footer() {
 
         <div className="mt-8 pt-8 border-t border-gray-200">
           <p className="text-center text-gray-600 text-sm">
-            © {new Date().getFullYear()} MINHAFARM. Todos os direitos reservados.
+            © {new Date().getFullYear()} ConectLife. Todos os direitos reservados.
           </p>
         </div>
       </div>

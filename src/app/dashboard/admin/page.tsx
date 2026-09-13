@@ -58,7 +58,7 @@ export default function AdminDashboard() {
             Painel Administrativo
           </h1>
           <p className="text-gray-600">
-            Gestão da plataforma MINHAFARM
+            Gestão da plataforma ConectLife
           </p>
         </div>
 

@@ -23,7 +23,7 @@ export default function SetupPage() {
         throw new Error(data.error || 'Erro ao criar admin');
       }
 
-      setMessage('✅ Admin criado com sucesso! Email: admin@minhafarm.co.mz / Password: admin123');
+      setMessage('✅ Admin criado com sucesso! Email: admin@conectlife.co.mz / Password: admin123');
     } catch (err: any) {
       setError(err.message || 'Erro ao criar admin');
     } finally {

@@ -1,7 +1,7 @@
-# MINHAFARM - Agent Development Guide
+# ConectLife - Agent Development Guide
 
 ## Project Overview
-MINHAFARM is a digital platform connecting people seeking medications with registered pharmacies in Mozambique. The platform allows users to search for medicines, find available pharmacies, and place orders.
+ConectLife is a digital platform connecting people seeking medications with registered pharmacies in Mozambique. The platform allows users to search for medicines, find available pharmacies, and place orders.
 
 ## Tech Stack
 - **Frontend**: Next.js 16 (React 19), TypeScript, Tailwind CSS
@@ -37,12 +37,12 @@ npm run lint
 ```bash
 npm run create-admin
 ```
-This creates an admin user with email: admin@minhafarm.co.mz and password: admin123
+This creates an admin user with email: admin@conectlife.co.mz and password: admin123
 
 ## Environment Variables
 Create a `.env.local` file in the project root:
 ```env
-MONGODB_URI=mongodb://localhost:27017/minhafarm
+MONGODB_URI=mongodb://localhost:27017/conectlife
 NEXTAUTH_URL=http://localhost:3000
 NEXTAUTH_SECRET=your-secret-key-here
 ```

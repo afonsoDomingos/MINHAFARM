@@ -41,14 +41,14 @@ async function seedData() {
 
     const pharmacy1User = await User.create({
       name: 'Farmácia Central',
-      email: 'farmacia1@minhafarm.co.mz',
+      email: 'farmacia1@conectlife.co.mz',
       password: hashedPassword,
       role: 'pharmacy',
     });
 
     const pharmacy2User = await User.create({
       name: 'Farmácia São João',
-      email: 'farmacia2@minhafarm.co.mz',
+      email: 'farmacia2@conectlife.co.mz',
       password: hashedPassword,
       role: 'pharmacy',
     });
@@ -58,7 +58,7 @@ async function seedData() {
     // Create pharmacies
     const pharmacy1 = await Pharmacy.create({
       name: 'Farmácia Central',
-      email: 'farmacia1@minhafarm.co.mz',
+      email: 'farmacia1@conectlife.co.mz',
       password: hashedPassword,
       address: 'Av. Julius Nyerere, 1234',
       neighborhood: 'Sommerschield',
@@ -72,7 +72,7 @@ async function seedData() {
 
     const pharmacy2 = await Pharmacy.create({
       name: 'Farmácia São João',
-      email: 'farmacia2@minhafarm.co.mz',
+      email: 'farmacia2@conectlife.co.mz',
       password: hashedPassword,
       address: 'Av. Mao Tse Tung, 567',
       neighborhood: 'Polana',
@@ -214,12 +214,12 @@ async function seedData() {
     console.log('\n=== DADOS DE TESTE CRIADOS COM SUCESSO ===\n');
     console.log('FARMÁCIAS:');
     console.log('1. Farmácia Central');
-    console.log('   Email: farmacia1@minhafarm.co.mz');
+    console.log('   Email: farmacia1@conectlife.co.mz');
     console.log('   Password: pharmacy123');
     console.log('   Localização: Sommerschield, Maputo');
     console.log('   Telefone: +258 84 123 4567');
     console.log('\n2. Farmácia São João');
-    console.log('   Email: farmacia2@minhafarm.co.mz');
+    console.log('   Email: farmacia2@conectlife.co.mz');
     console.log('   Password: pharmacy123');
     console.log('   Localização: Polana, Maputo');
     console.log('   Telefone: +258 84 987 6543');

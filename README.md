@@ -1,4 +1,4 @@
-# MINHAFARM - Plataforma Digital de Medicamentos em Moçambique
+# ConectLife - Plataforma Digital de Medicamentos em Moçambique
 
 Plataforma digital que conecta pessoas que procuram medicamentos com farmácias cadastradas em Moçambique.
 
@@ -21,7 +21,7 @@ Plataforma digital que conecta pessoas que procuram medicamentos com farmácias 
 1. Clone o repositório:
 ```bash
 git clone <repositorio>
-cd MINHAFARM
+cd ConectLife
 ```
 
 2. Instale as dependências:
@@ -36,7 +36,7 @@ cp env.example .env.local
 
 Edite o arquivo `.env.local` com suas configurações:
 ```env
-MONGODB_URI=mongodb://localhost:27017/minhafarm
+MONGODB_URI=mongodb://localhost:27017/conectlife
 NEXTAUTH_URL=http://localhost:3000
 NEXTAUTH_SECRET=seu-secret-aqui
 ```
@@ -59,7 +59,7 @@ npm run create-admin
 ```
 
 Isto criará:
-- Utilizador admin: `admin@minhafarm.co.mz`
+- Utilizador admin: `admin@conectlife.co.mz`
 - Password: `admin123`
 - Medicamentos de exemplo
 
@@ -90,7 +90,7 @@ npm run create-admin
 ```
 
 Isto criará:
-- Utilizador admin: `admin@minhafarm.co.mz`
+- Utilizador admin: `admin@conectlife.co.mz`
 - Password: `admin123`
 - Medicamentos de exemplo
 
@@ -118,7 +118,7 @@ A aplicação estará disponível em `http://localhost:3000`
 ## 📁 Estrutura do Projeto
 
 ```
-MINHAFARM/
+ConectLife/
 ├── src/
 │   ├── app/                    # Next.js App Router
 │   │   ├── api/               # API Routes
@@ -283,7 +283,7 @@ Para questões ou suporte, contacte: [seu-email]
 
 ## 📄 Licença
 
-Copyright © 2026 MINHAFARM. Todos os direitos reservados.
+Copyright © 2026 ConectLife. Todos os direitos reservados.
 
 ---
 

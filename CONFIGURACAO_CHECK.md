@@ -1,4 +1,4 @@
-# ✅ Verificação de Configuração - MINHAFARM
+# ✅ Verificação de Configuração - ConectLife
 
 ## 📋 Resumo da Configuração Atual
 
@@ -6,7 +6,7 @@
 
 | Variável | Valor | Status |
 |----------|-------|--------|
-| **MONGODB_URI** | `mongodb+srv://karinganastudio23:VIbemongodb@cluster0.oe0akin.mongodb.net/minhafarmdb?retryWrites=true&w=majority` | ✅ Atualizado |
+| **MONGODB_URI** | `mongodb+srv://karinganastudio23:VIbemongodb@cluster0.oe0akin.mongodb.net/conectlifedb?retryWrites=true&w=majority` | ✅ Atualizado |
 | **NEXTAUTH_URL** | `http://localhost:3000` | ✅ Configurado (local) |
 | **NEXTAUTH_SECRET** | `1NV7h+6U+spk5ZIRx8wMF9XI8NiX9p4MFBLLXTa9JhA=` | ✅ Chave forte gerada |
 
@@ -14,9 +14,9 @@
 
 | Variável | Valor | Status |
 |----------|-------|--------|
-| **MONGODB_URI** | `mongodb+srv://karinganastudio23:VIbemongodb@cluster0.oe0akin.mongodb.net/minhafarmdb?retryWrites=true&w=majority` | ✅ Documentado |
+| **MONGODB_URI** | `mongodb+srv://karinganastudio23:VIbemongodb@cluster0.oe0akin.mongodb.net/conectlifedb?retryWrites=true&w=majority` | ✅ Documentado |
 | **NEXTAUTH_SECRET** | `1NV7h+6U+spk5ZIRx8wMF9XI8NiX9p4MFBLLXTa9JhA=` | ✅ Gerado |
-| **NEXTAUTH_URL** | `https://minhafarmmz.vercel.app` | ✅ Configurado |
+| **NEXTAUTH_URL** | `https://conectlifemz.vercel.app` | ✅ Configurado |
 
 ### 📁 Arquivos de Configuração
 
@@ -48,7 +48,7 @@ npm run check-data       # Verificar dados no MongoDB
 **Farmácias**: 2 (Farmácia Central, Farmácia São João)  
 **Medicamentos**: 5 (Paracetamol, Ibuprofeno, Amoxicilina, Dipirona, Omeprazol)  
 **Preços**: Configurados em ambas as farmácias  
-**Admin**: admin@minhafarm.co.mz / admin123
+**Admin**: admin@conectlife.co.mz / admin123
 
 ## ⚠️ Status Atual
 
@@ -59,7 +59,7 @@ npm run check-data       # Verificar dados no MongoDB
 - [x] Scripts funcionais
 - [x] Documentação completa
 - [x] Git commit e push realizados
-- [x] Nome do banco atualizado (minhafarmdb)
+- [x] Nome do banco atualizado (conectlifedb)
 
 ### ❌ Problema Conhecido:
 - [ ] DNS local não resolve mongodb.net (Windows DNS issue)
@@ -84,12 +84,12 @@ npm run check-data       # Verificar dados no MongoDB
 
 ### Opção 2: Deploy na Vercel (Recomendado)
 1. Configurar variáveis na Vercel:
-   - MONGODB_URI: `mongodb+srv://karinganastudio23:VIbemongodb@cluster0.oe0akin.mongodb.net/minhafarmdb?retryWrites=true&w=majority`
+   - MONGODB_URI: `mongodb+srv://karinganastudio23:VIbemongodb@cluster0.oe0akin.mongodb.net/conectlifedb?retryWrites=true&w=majority`
    - NEXTAUTH_SECRET: `1NV7h+6U+spk5ZIRx8wMF9XI8NiX9p4MFBLLXTa9JhA=`
-   - NEXTAUTH_URL: `https://minhafarmmz.vercel.app`
+   - NEXTAUTH_URL: `https://conectlifemz.vercel.app`
 2. Trigger redeploy
 3. A Vercel deve conectar ao MongoDB Atlas
-4. Testar em https://minhafarmmz.vercel.app
+4. Testar em https://conectlifemz.vercel.app
 
 ### Opção 3: Testar Sem Dados (Funciona Agora)
 1. Aceder a http://localhost:3000

@@ -5,8 +5,8 @@
 ### 1. MONGODB_URI
 **Descrição**: Connection string para o banco de dados MongoDB
 **Formato**: 
-- MongoDB Atlas: `mongodb+srv://username:password@cluster.mongodb.net/minhafarm?retryWrites=true&w=majority`
-- MongoDB Local (não recomendado para Vercel): `mongodb://localhost:27017/minhafarm`
+- MongoDB Atlas: `mongodb+srv://username:password@cluster.mongodb.net/conectlife?retryWrites=true&w=majority`
+- MongoDB Local (não recomendado para Vercel): `mongodb://localhost:27017/conectlife`
 
 **Recomendação**: Use MongoDB Atlas para produção na Vercel
 
@@ -25,7 +25,7 @@ node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
 ### 3. NEXTAUTH_URL
 **Descrição**: URL de produção da aplicação
 **Formato**: `https://seu-dominio.vercel.app` ou seu domínio personalizado
-**Exemplo**: `https://minhafarmmz.vercel.app`
+**Exemplo**: `https://conectlife.vercel.app`
 
 **Nota**: NextAuth usa esta URL para gerar URLs de callback e cookies seguros.
 
@@ -33,7 +33,7 @@ node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
 
 ### Passo 1: Aceder ao Projeto na Vercel
 1. Aceda a https://vercel.com/dashboard
-2. Selecione o projeto MINHAFARM
+2. Selecione o projeto ConectLife
 
 ### Passo 2: Adicionar Variáveis de Ambiente
 1. Clique em **Settings** → **Environment Variables**
@@ -41,7 +41,7 @@ node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
 
 ```
 Name: MONGODB_URI
-Value: mongodb+srv://seu-usuario:sua-password@cluster.mongodb.net/minhafarm?retryWrites=true&w=majority
+Value: mongodb+srv://seu-usuario:sua-password@cluster.mongodb.net/conectlife?retryWrites=true&w=majority
 Environment: Production, Preview, Development
 
 Name: NEXTAUTH_SECRET
@@ -49,7 +49,7 @@ Value: sua-chave-secreta-gerada
 Environment: Production, Preview, Development
 
 Name: NEXTAUTH_URL
-Value: https://minhafarmmz.vercel.app
+Value: https://conectlife.vercel.app
 Environment: Production
 ```
 
@@ -61,7 +61,7 @@ Environment: Production
 
 ### MongoDB Atlas (Recomendado)
 ```
-MONGODB_URI=mongodb+srv://karinganastudio23:VIbemongodb@cluster0.oe0akin.mongodb.net/minhafarmdb?retryWrites=true&w=majority
+MONGODB_URI=mongodb+srv://karinganastudio23:VIbemongodb@cluster0.oe0akin.mongodb.net/conectlife?retryWrites=true&w=majority
 ```
 
 ### NEXTAUTH_SECRET (Gerado para produção)
@@ -71,7 +71,7 @@ NEXTAUTH_SECRET=1NV7h+6U+spk5ZIRx8wMF9XI8NiX9p4MFBLLXTa9JhA=
 
 ### NEXTAUTH_URL
 ```
-NEXTAUTH_URL=https://minhafarmmz.vercel.app
+NEXTAUTH_URL=https://conectlife.vercel.app
 ```
 
 ## ⚠️ Importante
@@ -99,7 +99,7 @@ Antes de configurar na Vercel:
 ### Domínio Personalizado
 Se usar domínio personalizado:
 ```
-NEXTAUTH_URL=https://www.minhafarm.co.mz
+NEXTAUTH_URL=https://www.conectlife.co.mz
 ```
 
 ## 🔄 Diferença de Ambientes

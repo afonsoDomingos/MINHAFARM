@@ -21,14 +21,14 @@ export async function POST() {
 
     const pharmacy1User = await User.create({
       name: 'Farmácia Central',
-      email: 'farmacia1@minhafarm.co.mz',
+      email: 'farmacia1@conectlife.co.mz',
       password: hashedPassword,
       role: 'pharmacy',
     });
 
     const pharmacy2User = await User.create({
       name: 'Farmácia São João',
-      email: 'farmacia2@minhafarm.co.mz',
+      email: 'farmacia2@conectlife.co.mz',
       password: hashedPassword,
       role: 'pharmacy',
     });
@@ -36,7 +36,7 @@ export async function POST() {
     // Create pharmacies
     const pharmacy1 = await Pharmacy.create({
       name: 'Farmácia Central',
-      email: 'farmacia1@minhafarm.co.mz',
+      email: 'farmacia1@conectlife.co.mz',
       password: hashedPassword,
       address: 'Av. 25 de Setembro, 123',
       neighborhood: 'Sommerschield',
@@ -50,7 +50,7 @@ export async function POST() {
 
     const pharmacy2 = await Pharmacy.create({
       name: 'Farmácia São João',
-      email: 'farmacia2@minhafarm.co.mz',
+      email: 'farmacia2@conectlife.co.mz',
       password: hashedPassword,
       address: 'Av. Mao Tse Tung, 456',
       neighborhood: 'Polana',

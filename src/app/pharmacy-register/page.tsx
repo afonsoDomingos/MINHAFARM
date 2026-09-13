@@ -79,7 +79,7 @@ export default function PharmacyRegisterPage() {
             Cadastrar Farmácia
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
-            Junte-se à MINHAFARM e conecte-se com mais clientes
+            Junte-se à ConectLife e conecte-se com mais clientes
           </p>
         </div>
 

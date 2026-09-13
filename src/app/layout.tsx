@@ -11,7 +11,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "MINHAFARM - Encontre Medicamentos em Moçambique",
+  title: "ConectLife - Encontre Medicamentos em Moçambique",
   description: "Plataforma digital que conecta pessoas que procuram medicamentos com farmácias cadastradas em Moçambique.",
 };
 

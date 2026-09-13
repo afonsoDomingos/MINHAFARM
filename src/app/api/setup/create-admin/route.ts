@@ -9,7 +9,7 @@ export async function POST() {
     await connectDB();
 
     // Check if admin already exists
-    const existingAdmin = await User.findOne({ email: 'admin@minhafarm.co.mz' });
+    const existingAdmin = await User.findOne({ email: 'admin@conectlife.co.mz' });
     if (existingAdmin) {
       return NextResponse.json(
         { error: 'Admin user already exists' },
@@ -21,7 +21,7 @@ export async function POST() {
     const hashedPassword = await bcrypt.hash('admin123', 10);
     const admin = await User.create({
       name: 'Administrador',
-      email: 'admin@minhafarm.co.mz',
+      email: 'admin@conectlife.co.mz',
       password: hashedPassword,
       role: 'admin',
     });
