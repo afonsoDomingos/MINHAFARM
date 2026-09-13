@@ -17,11 +17,11 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen">
-      {/* Hero Section with Banner */}
-      <section className="relative bg-gradient-to-br from-green-600 to-green-800 py-24">
-        <div className="absolute inset-0 bg-black/20"></div>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="text-center">
+      {/* Hero Section with Banner Image */}
+      <section className="relative h-[600px] bg-cover bg-center bg-no-repeat" style={{ backgroundImage: 'url(/banner.jpg)' }}>
+        <div className="absolute inset-0 bg-gradient-to-r from-green-900/90 to-green-700/70"></div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 h-full flex items-center">
+          <div className="text-center w-full">
             <img src="/logominhafarm.png" alt="ConectLife Logo" className="h-24 w-auto mx-auto mb-8" />
             <h1 className="text-4xl md:text-6xl font-bold text-white mb-4">
               Encontre o seu medicamento perto de si
