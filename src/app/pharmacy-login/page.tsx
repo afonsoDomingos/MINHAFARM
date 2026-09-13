@@ -42,7 +42,7 @@ export default function PharmacyLoginPage() {
       <div className="max-w-md w-full space-y-8">
         <div>
           <div className="flex justify-center">
-            <img src="/logominhafarm.png" alt="MINHAFARM Logo" className="h-20 w-auto" />
+            <img src="/MinhaFarm.png" alt="MINHAFARM Logo" className="h-20 w-auto" />
           </div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
             Área da Farmácia
