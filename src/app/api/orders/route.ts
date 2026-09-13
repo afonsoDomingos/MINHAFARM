@@ -9,7 +9,7 @@ export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
     const body = await request.json();
-    const { pharmacyId, items, deliveryMethod, deliveryAddress, notes, guestName, guestPhone, guestEmail } = body;
+    const { pharmacyId, items, deliveryMethod, deliveryAddress, deliveryLocation, notes, guestName, guestPhone, guestEmail } = body;
 
     if (!pharmacyId || !items || !Array.isArray(items) || items.length === 0) {
       return NextResponse.json(
@@ -74,6 +74,7 @@ export async function POST(request: NextRequest) {
       status: 'pending',
       deliveryMethod: deliveryMethod || 'pickup',
       deliveryAddress,
+      deliveryLocation,
       notes,
       guestName: !session ? guestName : undefined,
       guestPhone: !session ? guestPhone : undefined,

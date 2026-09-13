@@ -16,6 +16,10 @@ export interface IOrder extends Document {
   rejectionReason?: string;
   deliveryMethod: 'pickup' | 'delivery';
   deliveryAddress?: string;
+  deliveryLocation?: {
+    type: 'Point';
+    coordinates: [number, number];
+  };
   notes?: string;
   guestName?: string;
   guestPhone?: string;
@@ -82,6 +86,15 @@ const OrderSchema: Schema = new Schema(
     },
     deliveryAddress: {
       type: String,
+    },
+    deliveryLocation: {
+      type: {
+        type: String,
+        enum: ['Point'],
+      },
+      coordinates: {
+        type: [Number],
+      },
     },
     notes: {
       type: String,

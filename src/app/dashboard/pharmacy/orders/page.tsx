@@ -19,6 +19,10 @@ interface Order {
   rejectionReason?: string;
   deliveryMethod: 'pickup' | 'delivery';
   deliveryAddress?: string;
+  deliveryLocation?: {
+    type: 'Point';
+    coordinates: [number, number];
+  };
   notes?: string;
   createdAt: string;
   isGuestOrder?: boolean;
@@ -60,7 +64,7 @@ export default function PharmacyOrdersPage() {
   const handleUpdateStatus = async (orderId: string, newStatus: string, rejectionReason?: string) => {
     setError('');
     setSuccess('');
-    
+
     try {
       const response = await fetch(`/api/pharmacies/my-pharmacy/orders/${orderId}`, {
         method: 'PATCH',
@@ -81,6 +85,16 @@ export default function PharmacyOrdersPage() {
       setError('Erro ao atualizar status do pedido');
       console.error('Error updating order:', error);
     }
+  };
+
+  const handleShowDeliveryRoute = (order: Order) => {
+    if (!order.deliveryLocation) return;
+
+    const pharmacyLat = -25.9692; // Default Maputo coordinates
+    const pharmacyLng = 32.5732;
+
+    const googleMapsUrl = `https://www.google.com/maps/dir/?api=1&origin=${pharmacyLat},${pharmacyLng}&destination=${order.deliveryLocation.coordinates[1]},${order.deliveryLocation.coordinates[0]}&travelmode=driving`;
+    window.open(googleMapsUrl, '_blank');
   };
 
   const filteredOrders = orders.filter(order => {
@@ -223,6 +237,14 @@ export default function PharmacyOrdersPage() {
                         <p className="text-sm text-gray-600">
                           <span className="font-medium">Entrega:</span> {order.deliveryAddress}
                         </p>
+                        {order.deliveryLocation && (
+                          <button
+                            onClick={() => handleShowDeliveryRoute(order)}
+                            className="mt-2 inline-flex items-center px-3 py-1.5 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors"
+                          >
+                            🗺️ Ver Rota de Entrega
+                          </button>
+                        )}
                       </div>
                     )}
 

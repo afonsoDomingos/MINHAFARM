@@ -20,6 +20,8 @@ export default function CheckoutPage() {
   const [guestName, setGuestName] = useState('');
   const [guestPhone, setGuestPhone] = useState('');
   const [guestEmail, setGuestEmail] = useState('');
+  const [userLocation, setUserLocation] = useState<{ latitude: number; longitude: number } | null>(null);
+  const [detectingLocation, setDetectingLocation] = useState(false);
 
   const pharmacyGroupedItems = getPharmacyGroupedItems();
   const totalWithDelivery = getCartTotal() + (deliveryMethod === 'delivery' ? DELIVERY_FEE : 0);
@@ -27,6 +29,30 @@ export default function CheckoutPage() {
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  const handleDetectLocation = () => {
+    if (!navigator.geolocation) {
+      setError('Seu navegador não suporta geolocalização.');
+      return;
+    }
+
+    setDetectingLocation(true);
+    setError('');
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setUserLocation({
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+        });
+        setDetectingLocation(false);
+      },
+      (error) => {
+        setDetectingLocation(false);
+        setError('Erro ao detectar localização. Verifique as permissões do navegador.');
+      }
+    );
+  };
 
   useEffect(() => {
     if (mounted && items.length === 0) {
@@ -87,6 +113,12 @@ export default function CheckoutPage() {
               totalAmount,
               deliveryMethod,
               deliveryAddress: deliveryMethod === 'delivery' ? deliveryAddress : undefined,
+              deliveryLocation: deliveryMethod === 'delivery' && userLocation
+                ? {
+                    type: 'Point',
+                    coordinates: [userLocation.longitude, userLocation.latitude],
+                  }
+                : undefined,
               notes,
               guestName: !session ? guestName : undefined,
               guestPhone: !session ? guestPhone : undefined,
@@ -289,19 +321,68 @@ export default function CheckoutPage() {
             </div>
 
             {deliveryMethod === 'delivery' && (
-              <div className="mt-4">
-                <label htmlFor="deliveryAddress" className="block text-sm font-medium text-gray-700 mb-1">
-                  Endereço de Entrega *
-                </label>
-                <textarea
-                  id="deliveryAddress"
-                  required
-                  value={deliveryAddress}
-                  onChange={(e) => setDeliveryAddress(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-green-500 focus:border-green-500"
-                  rows={3}
-                  placeholder="Av. Julius Nyerere, 123, Maputo"
-                />
+              <div className="mt-4 space-y-4">
+                <div>
+                  <label htmlFor="deliveryAddress" className="block text-sm font-medium text-gray-700 mb-1">
+                    Endereço de Entrega *
+                  </label>
+                  <textarea
+                    id="deliveryAddress"
+                    required
+                    value={deliveryAddress}
+                    onChange={(e) => setDeliveryAddress(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-green-500 focus:border-green-500"
+                    rows={3}
+                    placeholder="Av. Julius Nyerere, 123, Maputo"
+                  />
+                </div>
+
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                  <div className="flex items-start gap-3">
+                    <div className="flex-shrink-0">
+                      <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-sm font-medium text-blue-900 mb-2">
+                        Compartilhar sua localização (opcional)
+                      </p>
+                      <p className="text-sm text-blue-700 mb-3">
+                        Isso ajuda a farmácia a encontrar seu endereço mais facilmente para entrega.
+                      </p>
+                      <button
+                        type="button"
+                        onClick={handleDetectLocation}
+                        disabled={detectingLocation}
+                        className="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {detectingLocation ? (
+                          <>
+                            <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            A detectar...
+                          </>
+                        ) : (
+                          <>
+                            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
+                            Detectar Minha Localização
+                          </>
+                        )}
+                      </button>
+                      {userLocation && (
+                        <p className="text-xs text-blue-600 mt-2">
+                          ✓ Localização detectada: {userLocation.latitude.toFixed(4)}, {userLocation.longitude.toFixed(4)}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </div>
               </div>
             )}
           </div>
