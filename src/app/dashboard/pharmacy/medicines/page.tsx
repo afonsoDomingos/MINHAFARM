@@ -44,6 +44,8 @@ export default function PharmacyMedicinesPage() {
     price: '',
     quantity: '',
   });
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
 
   useEffect(() => {
     fetchMedicines();
@@ -65,6 +67,9 @@ export default function PharmacyMedicinesPage() {
 
   const handleAddMedicine = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError('');
+    setSuccess('');
+    
     try {
       const response = await fetch('/api/pharmacies/my-pharmacy/medicines', {
         method: 'POST',
@@ -81,7 +86,10 @@ export default function PharmacyMedicinesPage() {
         }),
       });
 
+      const data = await response.json();
+
       if (response.ok) {
+        setSuccess('Medicamento adicionado com sucesso!');
         setShowAddModal(false);
         setNewMedicine({
           name: '',
@@ -94,8 +102,12 @@ export default function PharmacyMedicinesPage() {
           quantity: '',
         });
         fetchMedicines();
+        setTimeout(() => setSuccess(''), 3000);
+      } else {
+        setError(data.error || 'Erro ao adicionar medicamento');
       }
     } catch (error) {
+      setError('Erro ao adicionar medicamento');
       console.error('Error adding medicine:', error);
     }
   };
@@ -217,6 +229,16 @@ export default function PharmacyMedicinesPage() {
     <div className="min-h-screen bg-gray-50 py-8">
       <PharmacyDashboardNav />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {error && (
+          <div className="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+            {error}
+          </div>
+        )}
+        {success && (
+          <div className="mb-4 bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg">
+            {success}
+          </div>
+        )}
         <div className="flex justify-between items-center mb-8">
           <div>
             <h1 className="text-3xl font-bold text-gray-900 mb-2">
@@ -370,6 +392,11 @@ export default function PharmacyMedicinesPage() {
               </div>
 
               <form onSubmit={handleAddMedicine} className="space-y-4">
+                {error && (
+                  <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+                    {error}
+                  </div>
+                )}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Nome do Medicamento *
