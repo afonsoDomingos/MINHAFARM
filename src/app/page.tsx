@@ -165,8 +165,9 @@ export default function HomePage() {
       </section>
 
       {/* Trust Section */}
-      <section className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="relative py-20 bg-cover bg-center bg-no-repeat" style={{ backgroundImage: 'url(/fundo02.jpg)' }}>
+        <div className="absolute inset-0 bg-white/95"></div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">
             Por que confiar na ConectLife?
           </h2>
