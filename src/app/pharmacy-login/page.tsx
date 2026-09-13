@@ -18,6 +18,9 @@ export default function PharmacyLoginPage() {
     if (searchParams.get('registered') === 'true') {
       setSuccess('Farmácia registada com sucesso! Aguardando aprovação do administrador.');
     }
+    if (searchParams.get('redirect') === '/checkout') {
+      setSuccess('Faça login para finalizar o pedido do carrinho.');
+    }
   }, [searchParams]);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -37,8 +40,9 @@ export default function PharmacyLoginPage() {
         setError('Email ou password inválidos');
       } else {
         setSuccess('Login realizado com sucesso! Redirecionando...');
+        const redirectUrl = searchParams.get('redirect') || '/dashboard/pharmacy';
         setTimeout(() => {
-          router.push('/dashboard/pharmacy');
+          router.push(redirectUrl);
           router.refresh();
         }, 1000);
       }

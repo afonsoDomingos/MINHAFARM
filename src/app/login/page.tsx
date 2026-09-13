@@ -18,6 +18,9 @@ export default function LoginPage() {
     if (searchParams.get('registered') === 'true') {
       setSuccess('Conta criada com sucesso! Por favor, faça login.');
     }
+    if (searchParams.get('redirect') === '/checkout') {
+      setSuccess('Faça login para finalizar o pedido do carrinho.');
+    }
   }, [searchParams]);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -37,8 +40,9 @@ export default function LoginPage() {
         setError('Email ou password inválidos');
       } else {
         setSuccess('Login realizado com sucesso! Redirecionando...');
+        const redirectUrl = searchParams.get('redirect') || '/';
         setTimeout(() => {
-          router.push('/');
+          router.push(redirectUrl);
           router.refresh();
         }, 1000);
       }

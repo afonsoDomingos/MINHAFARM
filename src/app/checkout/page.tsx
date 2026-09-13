@@ -113,6 +113,14 @@ export default function CheckoutPage() {
           <p className="text-gray-600">
             Revise os itens e escolha o método de entrega
           </p>
+          {!session && (
+            <div className="mt-4 bg-yellow-50 border border-yellow-200 text-yellow-800 px-4 py-3 rounded-lg">
+              <p className="font-medium">Faça login para finalizar o pedido</p>
+              <p className="text-sm mt-1">
+                Você precisa estar logado para concluir o pedido. Seus itens estão salvos no carrinho.
+              </p>
+            </div>
+          )}
         </div>
 
         {error && (

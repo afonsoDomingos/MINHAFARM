@@ -192,32 +192,23 @@ export default function PharmacyDetailPage() {
                         <p className="text-sm text-gray-600">
                           Quantidade: {item.quantity}
                         </p>
-                        {session ? (
-                          <button
-                            onClick={() => {
-                              addToCart({
-                                pharmacyId: pharmacy._id,
-                                pharmacyName: pharmacy.name,
-                                medicineId: item.medicineId._id,
-                                medicineName: item.medicineId.name,
-                                price: item.price,
-                              });
-                              setToastMessage(`${item.medicineId.name} adicionado ao carrinho`);
-                              setShowToast(true);
-                              setTimeout(() => setShowToast(false), 3000);
-                            }}
-                            className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
-                          >
-                            Adicionar ao Pedido
-                          </button>
-                        ) : (
-                          <Link
-                            href="/login"
-                            className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
-                          >
-                            Entrar para Pedir
-                          </Link>
-                        )}
+                        <button
+                          onClick={() => {
+                            addToCart({
+                              pharmacyId: pharmacy._id,
+                              pharmacyName: pharmacy.name,
+                              medicineId: item.medicineId._id,
+                              medicineName: item.medicineId.name,
+                              price: item.price,
+                            });
+                            setToastMessage(`${item.medicineId.name} adicionado ao carrinho`);
+                            setShowToast(true);
+                            setTimeout(() => setShowToast(false), 3000);
+                          }}
+                          className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                        >
+                          Adicionar ao Pedido
+                        </button>
                       </>
                     ) : (
                       <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800">
