@@ -396,19 +396,22 @@ export default function MapPage() {
 
                     const isSelected = selectedPharmacy?._id === pharmacy._id;
 
-                    // Custom icon for selected pharmacy
-                    const selectedIcon = new (window as any).L.divIcon({
-                      className: 'custom-selected-marker',
-                      html: `<div style="background-color: #dc2626; border: 3px solid white; border-radius: 50%; width: 30px; height: 30px; box-shadow: 0 2px 5px rgba(0,0,0,0.3);"></div>`,
-                      iconSize: [30, 30],
-                      iconAnchor: [15, 15],
-                    });
+                    // Custom icon for selected pharmacy - check if L is available
+                    let selectedIcon = undefined;
+                    if (isSelected && typeof window !== 'undefined' && (window as any).L && (window as any).L.divIcon) {
+                      selectedIcon = new (window as any).L.divIcon({
+                        className: 'custom-selected-marker',
+                        html: `<div style="background-color: #dc2626; border: 3px solid white; border-radius: 50%; width: 30px; height: 30px; box-shadow: 0 2px 5px rgba(0,0,0,0.3);"></div>`,
+                        iconSize: [30, 30],
+                        iconAnchor: [15, 15],
+                      });
+                    }
 
                     return (
                       <Marker
                         key={pharmacy._id}
                         position={[pharmacy.location.coordinates[1], pharmacy.location.coordinates[0]]}
-                        icon={isSelected ? selectedIcon : undefined}
+                        icon={selectedIcon}
                       >
                         <Popup>
                           <div className="min-w-[200px]">
