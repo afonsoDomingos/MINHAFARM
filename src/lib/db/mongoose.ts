@@ -1,5 +1,8 @@
 import mongoose from 'mongoose';
 
+// Import all models to ensure they are registered before any database operations
+import '@/lib/models';
+
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/conectlife';
 
 if (!MONGODB_URI) {
