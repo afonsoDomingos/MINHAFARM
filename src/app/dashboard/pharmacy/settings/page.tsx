@@ -23,6 +23,7 @@ export default function PharmacySettingsPage() {
   });
   const [detectingLocation, setDetectingLocation] = useState(false);
   const [parsingLink, setParsingLink] = useState(false);
+  const [reverseGeocoding, setReverseGeocoding] = useState(false);
 
   useEffect(() => {
     fetchPharmacyData();
@@ -50,6 +51,51 @@ export default function PharmacySettingsPage() {
       console.error('Error fetching pharmacy data:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const reverseGeocode = async (lat: number, lng: number) => {
+    setReverseGeocoding(true);
+    try {
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`,
+        {
+          headers: {
+            'User-Agent': 'ConectLife-Mozambique',
+          },
+        }
+      );
+      const data = await response.json();
+
+      if (data && data.address) {
+        const addr = data.address;
+        setFormData((prev: any) => {
+          const newFormData: any = {
+            ...prev,
+            latitude: lat.toString(),
+            longitude: lng.toString(),
+          };
+
+          // Try to extract address components
+          if (addr.road || addr.display_name) {
+            newFormData.address = addr.road || addr.display_name.split(',')[0];
+          }
+          if (addr.suburb || addr.neighbourhood) {
+            newFormData.neighborhood = addr.suburb || addr.neighbourhood;
+          }
+          if (addr.city || addr.town || addr.village) {
+            newFormData.city = addr.city || addr.town || addr.village;
+          }
+
+          return newFormData;
+        });
+        setMessage('Localização e endereço atualizados automaticamente!');
+      }
+    } catch (error) {
+      console.error('Error reverse geocoding:', error);
+      // Don't show error for reverse geocoding failure
+    } finally {
+      setReverseGeocoding(false);
     }
   };
 
@@ -109,14 +155,18 @@ export default function PharmacySettingsPage() {
 
     navigator.geolocation.getCurrentPosition(
       (position) => {
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
         setFormData({
           ...formData,
-          latitude: position.coords.latitude.toString(),
-          longitude: position.coords.longitude.toString(),
+          latitude: lat.toString(),
+          longitude: lng.toString(),
           googleMapsLink: formData.googleMapsLink,
         });
         setDetectingLocation(false);
         setMessage('Localização detectada com sucesso!');
+        // Reverse geocode to get address
+        reverseGeocode(lat, lng);
       },
       (error) => {
         setDetectingLocation(false);
@@ -183,6 +233,8 @@ export default function PharmacySettingsPage() {
           googleMapsLink: formData.googleMapsLink,
         });
         setMessage('Coordenadas extraídas do link do Google Maps com sucesso!');
+        // Reverse geocode to get address
+        reverseGeocode(lat, lng);
       } else {
         setMessage('Não foi possível extrair coordenadas do link. Tente abrir o link no Google Maps e copiar o URL completo da barra de endereços.');
       }
@@ -384,6 +436,38 @@ export default function PharmacySettingsPage() {
                 </div>
               </div>
 
+              {formData.latitude && formData.longitude && (
+                <div className="mt-3">
+                  <button
+                    type="button"
+                    onClick={() => reverseGeocode(parseFloat(formData.latitude), parseFloat(formData.longitude))}
+                    disabled={reverseGeocoding}
+                    className="inline-flex items-center px-4 py-2 bg-teal-600 text-white text-sm rounded-lg hover:bg-teal-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {reverseGeocoding ? (
+                      <>
+                        <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        A buscar endereço...
+                      </>
+                    ) : (
+                      <>
+                        <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                        Buscar Endereço das Coordenadas
+                      </>
+                    )}
+                  </button>
+                  <p className="text-xs text-gray-500 mt-1">
+                    Isso pode atualizar automaticamente o endereço, bairro e cidade
+                  </p>
+                </div>
+              )}
+
               <div className="mt-4 pt-4 border-t border-gray-200">
                 <label htmlFor="googleMapsLink" className="block text-sm font-medium text-gray-700 mb-1">
                   Link do Google Maps (opcional)
@@ -417,7 +501,7 @@ export default function PharmacySettingsPage() {
                     ) : (
                       <>
                         <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l-4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
                         </svg>
                         Extrair Coordenadas do Link
                       </>
