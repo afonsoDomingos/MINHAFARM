@@ -65,7 +65,38 @@ Isto criará:
 
 ⚠️ **Importante**: Altere a password do administrador após o primeiro login!
 
-6. Adicione dados de teste (farmácias e medicamentos):
+6. Configure o MongoDB (escolha uma opção):
+
+**Opção A: MongoDB Atlas (Nuvem - Recomendado)**
+- Crie conta gratuita em https://www.mongodb.com/cloud/atlas
+- Crie um cluster gratuito
+- Copie a connection string
+- Atualize o MONGODB_URI no .env.local com a connection string
+- Execute: `npm run seed-data`
+
+**Opção B: MongoDB Local**
+- Instale MongoDB localmente
+- Inicie o MongoDB: `mongod`
+- Use a connection string local em .env.local
+
+**Opção C: Testar Sem MongoDB**
+- O sistema funciona sem dados pré-carregados
+- Pode registar farmácias manualmente em `/pharmacy-register`
+- Pode adicionar medicamentos manualmente no painel da farmácia
+
+7. Crie o utilizador administrador:
+```bash
+npm run create-admin
+```
+
+Isto criará:
+- Utilizador admin: `admin@minhafarm.co.mz`
+- Password: `admin123`
+- Medicamentos de exemplo
+
+⚠️ **Importante**: Altere a password do administrador após o primeiro login!
+
+8. Adicione dados de teste (opcional - requer MongoDB):
 ```bash
 npm run seed-data
 ```
@@ -77,7 +108,7 @@ Isto criará:
 
 📋 **Credenciais**: Veja o arquivo [CREDENTIALS.md](./CREDENTIALS.md) para todas as credenciais de teste e instruções detalhadas.
 
-7. Inicie o servidor de desenvolvimento:
+9. Inicie o servidor de desenvolvimento:
 ```bash
 npm run dev
 ```

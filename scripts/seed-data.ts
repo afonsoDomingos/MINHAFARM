@@ -1,15 +1,28 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
+import dotenv from 'dotenv';
+
+// Load .env.local file
+dotenv.config({ path: '.env.local' });
+
 import User from '../src/lib/models/User';
 import Pharmacy from '../src/lib/models/Pharmacy';
 import Medicine from '../src/lib/models/Medicine';
 import PharmacyMedicine from '../src/lib/models/PharmacyMedicine';
 
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/minhafarm';
+const MONGODB_URI = process.env.MONGODB_URI;
+
+console.log('Connecting to MongoDB...');
+console.log('Connection string:', MONGODB_URI ? MONGODB_URI.substring(0, 30) + '...' : 'Not set');
 
 async function seedData() {
   try {
-    await mongoose.connect(MONGODB_URI);
+    // Add connection options for better reliability
+    await mongoose.connect(MONGODB_URI, {
+      serverSelectionTimeoutMS: 10000,
+      socketTimeoutMS: 45000,
+      family: 4, // Use IPv4
+    });
     console.log('Connected to MongoDB');
 
     // Clear existing data

@@ -38,69 +38,114 @@
 4. **Dipirona 500 mg** - 115 MT (Indisponível)
 5. **Omeprazol 20 mg** - 270 MT (Disponível)
 
-## 🚀 Fluxo de Teste Rápido
+## ⚠️ STATUS DO BANCO DE DADOS
+
+**MongoDB Atlas**: Cluster não está acessível no momento. O script de dados de teste não pode ser executado até que a conexão seja estabelecida.
+
+### � Para Carregar os Dados de Teste:
+
+**Opção 1: MongoDB Atlas (Quando Disponível)**
+1. Verifique se o cluster está ativo no MongoDB Atlas
+2. Verifique Network Access (whitelist de IP)
+3. Execute: `npm run seed-data`
+
+**Opção 2: MongoDB Local (Recomendado para Testes)**
+1. Instale MongoDB localmente:
+   - Windows: https://www.mongodb.com/try/download/community
+   - Mac: `brew install mongodb-community`
+   - Linux: `sudo apt-get install mongodb`
+2. Inicie o MongoDB: `mongod`
+3. Altere o `.env.local` para usar local:
+   ```
+   MONGODB_URI=mongodb://localhost:27017/minhafarm
+   ```
+4. Execute: `npm run seed-data`
+
+**Opção 3: Testar Sem Dados**
+1. O sistema funciona mesmo sem dados de teste
+2. Pode criar manualmente:
+   - Registar farmácias em `/pharmacy-register`
+   - Adicionar medicamentos no painel da farmácia
+   - Criar utilizadores em `/register`
+
+## �🚀 Fluxo de Teste Rápido
 
 ### 1. Login como Admin
 1. Aceda a http://localhost:3000
 2. Clique em "Entrar"
 3. Use: `admin@minhafarm.co.mz` / `admin123`
 4. Aceda ao painel administrativo
-5. Verifique as farmácias já aprovadas
+5. Pode aprovar farmácias manualmente
 
-### 2. Login como Farmácia
-1. Aceda a http://localhost:3000
-2. Clique em "Entrar" ou "Área da Farmácia"
-3. Use: `farmacia1@minhafarm.co.mz` / `pharmacy123`
-4. Veja os medicamentos cadastrados
-5. Gerencie pedidos recebidos
+### 2. Registar Farmácia Manualmente
+1. Aceda a http://localhost:3000/pharmacy-register
+2. Preencha os dados da farmácia
+3. Após registo, use credenciais para login
+4. Aprovada pelo admin, pode adicionar medicamentos
 
-### 3. Criar Utilizador de Teste
+### 3. Login como Farmácia
+1. Aceda a http://localhost:3000/pharmacy-login
+2. Use: `farmacia1@minhafarm.co.mz` / `pharmacy123` (após seed-data)
+3. Ou use credenciais da farmácia que registrou
+4. Adicione medicamentos manualmente no painel
+
+### 4. Criar Utilizador de Teste
 1. Aceda a http://localhost:3000
 2. Clique em "Criar Conta"
 3. Preencha os dados (qualquer dados funcionam)
 4. Use a conta criada para testar fluxo de utilizador
 
-### 4. Pesquisar Medicamentos
+### 5. Pesquisar Medicamentos
 1. Aceda a http://localhost:3000
-2. Pesquise "Paracetamol" ou "Ibuprofeno"
-3. Veja as farmácias onde estão disponíveis
+2. Pesquise qualquer medicamento
+3. Verá farmácias disponíveis (após seed-data ou manual)
 4. Compare preços entre farmácias
-
-### 5. Fazer Pedido
-1. Após login como utilizador
-2. Pesquise um medicamento
-3. Clique numa farmácia
-4. Adicione ao pedido
-5. Verifique o pedido no painel da farmácia
-
-## ⚠️ Notas Importantes
-
-- Estas credenciais são apenas para **testes e desenvolvimento**
-- Em produção, todos os utilizadores devem criar as suas próprias contas
-- As passwords devem ser alteradas antes do lançamento em produção
-- Os dados de teste podem ser regerados executando `npm run seed-data`
 
 ## 🔄 Como Regerar Dados de Teste
 
-Se precisar de limpar e regerar os dados de teste:
+Quando o MongoDB estiver disponível:
 
 ```bash
-# Limpar dados do MongoDB (opcional)
-# Conecte ao MongoDB e execute:
-use minhafarm
-db.users.deleteMany({ role: 'pharmacy' })
-db.pharmacies.deleteMany()
-db.medicines.deleteMany()
-db.pharmacyMedicines.deleteMany()
-
 # Regerar dados de teste
 npm run seed-data
 ```
 
+## 📞 Resolução de Problemas MongoDB
+
+### Se `npm run seed-data` falhar:
+
+1. **Testar conexão:**
+   ```bash
+   npm run test-connection
+   ```
+
+2. **Verificar MongoDB Atlas:**
+   - Aceda a https://cloud.mongodb.com
+   - Verifique se o cluster está "Active"
+   - Verifique Network Access (whitelist)
+
+3. **Usar MongoDB Local:**
+   - Instale MongoDB localmente
+   - Inicie com `mongod`
+   - Atualize `.env.local` para `mongodb://localhost:27017/minhafarm`
+
+## 🎯 Diferença: Com vs Sem Dados de Teste
+
+### Com Dados de Teste (Seed):
+- ✅ 2 farmácias pré-configuradas
+- ✅ 5 medicamentos prontos
+- ✅ Preços e disponibilidade definidos
+- ✅ Login imediato com credenciais conhecidas
+
+### Sem Dados de Teste:
+- ✅ Sistema funciona normalmente
+- ⚠️ Precisa registar farmácia manualmente
+- ⚠️ Precisa adicionar medicamentos manualmente
+- ✅ Mais flexível para testes personalizados
+
 ## 📞 Suporte
 
-Se tiver problemas com login:
-1. Verifique que o MongoDB está a correr
-2. Confirme que executou `npm run seed-data`
-3. Verifique as credenciais neste arquivo
-4. Limpe os cookies do navegador se necessário
+Se tiver problemas com conexão MongoDB:
+1. Execute `npm run test-connection` para diagnosticar
+2. Considere usar MongoDB local para testes
+3. O sistema funciona perfeitamente sem dados pré-carregados
