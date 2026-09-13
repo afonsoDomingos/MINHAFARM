@@ -51,7 +51,8 @@ export default function MapPage() {
   const [routeTime, setRouteTime] = useState<string>('');
   const mapRef = useRef<any>(null);
   const routingControlRef = useRef<any>(null);
-  const [mapZoom, setMapZoom] = useState<number>(userLocation ? 13 : 12);
+  const [mapZoom, setMapZoom] = useState<number>(12);
+  const [detectingLocation, setDetectingLocation] = useState(false);
 
   useEffect(() => {
     fetchPharmacies();
@@ -110,16 +111,24 @@ export default function MapPage() {
   };
 
   const getUserLocation = () => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setUserLocation([position.coords.latitude, position.coords.longitude]);
-        },
-        (error) => {
-          console.error('Error getting location:', error);
-        }
-      );
+    if (!navigator.geolocation) {
+      alert('Seu navegador não suporta geolocalização.');
+      return;
     }
+
+    setDetectingLocation(true);
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setUserLocation([position.coords.latitude, position.coords.longitude]);
+        setDetectingLocation(false);
+      },
+      (error) => {
+        console.error('Error getting location:', error);
+        setDetectingLocation(false);
+        alert('Erro ao detectar localização. Verifique as permissões do navegador.');
+      }
+    );
   };
 
   const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number): number => {
@@ -218,8 +227,33 @@ export default function MapPage() {
                 </select>
               </div>
 
+              <button
+                type="button"
+                onClick={getUserLocation}
+                disabled={detectingLocation}
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 h-[42px] mt-5"
+              >
+                {detectingLocation ? (
+                  <>
+                    <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    A detectar...
+                  </>
+                ) : (
+                  <>
+                    <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    Detectar Minha Localização
+                  </>
+                )}
+              </button>
+
               {userLocation && (
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 mt-5">
                   <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
                     📍 Localização detectada
                   </span>
@@ -398,6 +432,19 @@ export default function MapPage() {
                     <p className="text-sm font-medium text-gray-700">Nome</p>
                     <p className="text-sm text-gray-900">{selectedPharmacy.name}</p>
                   </div>
+                  {userLocation && selectedPharmacy.location && (
+                    <div className="bg-green-50 border border-green-200 rounded-lg p-3">
+                      <p className="text-sm font-medium text-green-800">Distância até você</p>
+                      <p className="text-2xl font-bold text-green-600">
+                        {calculateDistance(
+                          userLocation[0],
+                          userLocation[1],
+                          selectedPharmacy.location.coordinates[1],
+                          selectedPharmacy.location.coordinates[0]
+                        ).toFixed(1)} km
+                      </p>
+                    </div>
+                  )}
                   <div>
                     <p className="text-sm font-medium text-gray-700">Endereço</p>
                     <p className="text-sm text-gray-900">{selectedPharmacy.address}</p>
