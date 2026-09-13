@@ -53,6 +53,7 @@ export default function MapPage() {
   const routingControlRef = useRef<any>(null);
   const [mapZoom, setMapZoom] = useState<number>(12);
   const [detectingLocation, setDetectingLocation] = useState(false);
+  const [userAddress, setUserAddress] = useState<string>('');
 
   useEffect(() => {
     fetchPharmacies();
@@ -110,6 +111,37 @@ export default function MapPage() {
     }
   };
 
+  const reverseGeocodeUserLocation = async (lat: number, lng: number) => {
+    try {
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`,
+        {
+          headers: {
+            'User-Agent': 'ConectLife-Mozambique',
+          },
+        }
+      );
+      const data = await response.json();
+
+      if (data && data.address) {
+        const addr = data.address;
+        let addressParts = [];
+
+        if (addr.road) addressParts.push(addr.road);
+        if (addr.suburb || addr.neighbourhood) addressParts.push(addr.suburb || addr.neighbourhood);
+        if (addr.city || addr.town || addr.village) addressParts.push(addr.city || addr.town || addr.village);
+
+        if (addressParts.length > 0) {
+          setUserAddress(addressParts.join(', '));
+        } else {
+          setUserAddress(data.display_name);
+        }
+      }
+    } catch (error) {
+      console.error('Error reverse geocoding:', error);
+    }
+  };
+
   const getUserLocation = () => {
     if (!navigator.geolocation) {
       alert('Seu navegador não suporta geolocalização.');
@@ -117,11 +149,16 @@ export default function MapPage() {
     }
 
     setDetectingLocation(true);
+    setUserAddress('');
 
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        setUserLocation([position.coords.latitude, position.coords.longitude]);
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
+        setUserLocation([lat, lng]);
         setDetectingLocation(false);
+        // Reverse geocode to get address
+        reverseGeocodeUserLocation(lat, lng);
       },
       (error) => {
         console.error('Error getting location:', error);
@@ -257,6 +294,11 @@ export default function MapPage() {
                   <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
                     📍 Localização detectada
                   </span>
+                  {userAddress && (
+                    <span className="text-sm text-gray-600 max-w-[300px] truncate">
+                      {userAddress}
+                    </span>
+                  )}
                 </div>
               )}
             </div>
