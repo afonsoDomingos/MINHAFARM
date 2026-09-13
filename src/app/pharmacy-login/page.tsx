@@ -1,11 +1,11 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { signIn } from 'next-auth/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 
-export default function PharmacyLoginPage() {
+function PharmacyLoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [email, setEmail] = useState('');
@@ -130,5 +130,13 @@ export default function PharmacyLoginPage() {
         </form>
       </div>
     </div>
+  );
+}
+
+export default function PharmacyLoginPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-gray-50 flex items-center justify-center">A carregar...</div>}>
+      <PharmacyLoginForm />
+    </Suspense>
   );
 }
