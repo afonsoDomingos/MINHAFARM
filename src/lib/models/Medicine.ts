@@ -53,6 +53,12 @@ const MedicineSchema: Schema = new Schema(
 
 MedicineSchema.index({ name: 'text', description: 'text' });
 
-const Medicine: Model<IMedicine> = mongoose.models.Medicine || mongoose.model<IMedicine>('Medicine', MedicineSchema);
+let Medicine: Model<IMedicine>;
+
+try {
+  Medicine = mongoose.model<IMedicine>('Medicine');
+} catch {
+  Medicine = mongoose.model<IMedicine>('Medicine', MedicineSchema);
+}
 
 export default Medicine;

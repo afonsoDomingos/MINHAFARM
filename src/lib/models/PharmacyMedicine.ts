@@ -44,6 +44,12 @@ const PharmacyMedicineSchema: Schema = new Schema(
 
 PharmacyMedicineSchema.index({ pharmacyId: 1, medicineId: 1 }, { unique: true });
 
-const PharmacyMedicine: Model<IPharmacyMedicine> = mongoose.models.PharmacyMedicine || mongoose.model<IPharmacyMedicine>('PharmacyMedicine', PharmacyMedicineSchema);
+let PharmacyMedicine: Model<IPharmacyMedicine>;
+
+try {
+  PharmacyMedicine = mongoose.model<IPharmacyMedicine>('PharmacyMedicine');
+} catch {
+  PharmacyMedicine = mongoose.model<IPharmacyMedicine>('PharmacyMedicine', PharmacyMedicineSchema);
+}
 
 export default PharmacyMedicine;

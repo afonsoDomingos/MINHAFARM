@@ -101,6 +101,12 @@ const PharmacySchema: Schema = new Schema(
 
 PharmacySchema.index({ location: '2dsphere' });
 
-const Pharmacy: Model<IPharmacy> = mongoose.models.Pharmacy || mongoose.model<IPharmacy>('Pharmacy', PharmacySchema);
+let Pharmacy: Model<IPharmacy>;
+
+try {
+  Pharmacy = mongoose.model<IPharmacy>('Pharmacy');
+} catch {
+  Pharmacy = mongoose.model<IPharmacy>('Pharmacy', PharmacySchema);
+}
 
 export default Pharmacy;
