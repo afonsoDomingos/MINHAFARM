@@ -10,6 +10,7 @@ export default function PharmacyDashboardNav() {
     { href: '/dashboard/pharmacy', label: 'Visão Geral', icon: '📊' },
     { href: '/dashboard/pharmacy/medicines', label: 'Produtos', icon: '�' },
     { href: '/dashboard/pharmacy/orders', label: 'Pedidos', icon: '📋' },
+    { href: '/dashboard/pharmacy/reports', label: 'Relatórios', icon: '📈' },
     { href: '/dashboard/pharmacy/settings', label: 'Definições', icon: '⚙️' },
   ];
 

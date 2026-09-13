@@ -157,6 +157,12 @@ export default function PharmacyDashboard() {
                     📋 Ver Pedidos
                   </Link>
                   <Link
+                    href="/dashboard/pharmacy/reports"
+                    className="block w-full text-left px-4 py-3 bg-purple-50 text-purple-700 rounded-lg hover:bg-purple-100 transition-colors"
+                  >
+                    📈 Ver Relatórios
+                  </Link>
+                  <Link
                     href="/dashboard/pharmacy/settings"
                     className="block w-full text-left px-4 py-3 bg-gray-50 text-gray-700 rounded-lg hover:bg-gray-100 transition-colors"
                   >
