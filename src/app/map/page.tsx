@@ -43,7 +43,7 @@ export default function MapPage() {
   const [pharmacies, setPharmacies] = useState<Pharmacy[]>([]);
   const [loading, setLoading] = useState(true);
   const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
-  const [filterRadius, setFilterRadius] = useState<number>(50);
+  const [filterRadius, setFilterRadius] = useState<number>(100);
   const [selectedPharmacy, setSelectedPharmacy] = useState<Pharmacy | null>(null);
 
   useEffect(() => {
@@ -157,6 +157,9 @@ export default function MapPage() {
                   <option value={25}>25 km</option>
                   <option value={50}>50 km</option>
                   <option value={100}>100 km</option>
+                  <option value={200}>200 km</option>
+                  <option value={500}>500 km</option>
+                  <option value={1000}>1000 km</option>
                 </select>
               </div>
 
