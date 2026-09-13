@@ -6,16 +6,21 @@ dotenv.config({ path: '.env.local' });
 const MONGODB_URI = process.env.MONGODB_URI;
 
 console.log('=== MongoDB Connection Test ===');
-console.log('MongoDB URI:', MONGODB_URI ? MONGODB_URI.substring(0, 30) + '...' : 'Not set');
+console.log('MongoDB URI:', MONGODB_URI ? MONGODB_URI.substring(0, 40) + '...' : 'Not set');
 
 async function testConnection() {
   try {
     console.log('Attempting to connect...');
+    
+    // Try with different connection options
     await mongoose.connect(MONGODB_URI, {
-      serverSelectionTimeoutMS: 10000,
+      serverSelectionTimeoutMS: 15000,
       socketTimeoutMS: 45000,
       family: 4,
+      // Disable SRV lookup if it's causing issues
+      // Note: This may not work with Atlas connection strings
     });
+    
     console.log('✅ Successfully connected to MongoDB!');
     
     // Test a simple query
@@ -28,13 +33,16 @@ async function testConnection() {
   } catch (error: any) {
     console.error('❌ Connection failed:', error.message);
     console.error('Error code:', error.code);
+    console.error('Error name:', error.name);
     
-    if (error.message.includes('querySrv')) {
+    if (error.message.includes('querySrv') || error.message.includes('ECONNREFUSED')) {
       console.log('\n💡 POSSIBLE SOLUTIONS:');
-      console.log('1. Check if MongoDB Atlas cluster is active');
+      console.log('1. Check if MongoDB Atlas cluster is active (not paused)');
       console.log('2. Verify Network Access in MongoDB Atlas (whitelist your IP)');
-      console.log('3. Check if connection string is correct');
-      console.log('4. Try using local MongoDB instead');
+      console.log('3. Check if connection string is correct in MongoDB Atlas');
+      console.log('4. Wait 2-3 minutes after resuming cluster');
+      console.log('5. Try copying connection string again from MongoDB Atlas');
+      console.log('6. Verify cluster is in the correct region');
     }
   }
 }

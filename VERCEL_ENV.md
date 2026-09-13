@@ -25,7 +25,7 @@ node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
 ### 3. NEXTAUTH_URL
 **Descrição**: URL de produção da aplicação
 **Formato**: `https://seu-dominio.vercel.app` ou seu domínio personalizado
-**Exemplo**: `https://minhafarm.vercel.app`
+**Exemplo**: `https://minhafarmmz.vercel.app`
 
 **Nota**: NextAuth usa esta URL para gerar URLs de callback e cookies seguros.
 
@@ -49,7 +49,7 @@ Value: sua-chave-secreta-gerada
 Environment: Production, Preview, Development
 
 Name: NEXTAUTH_URL
-Value: https://minhafarm.vercel.app
+Value: https://minhafarmmz.vercel.app
 Environment: Production
 ```
 
@@ -61,7 +61,7 @@ Environment: Production
 
 ### MongoDB Atlas (Recomendado)
 ```
-MONGODB_URI=mongodb+srv://karinganastudio23:VIbemongodb@cluster0.oe0akin.mongodb.net/minhafarm?retryWrites=true&w=majority
+MONGODB_URI=mongodb+srv://karinganastudio23:VIbemongodb@cluster0.oe0akin.mongodb.net/minhafarmdb?retryWrites=true&w=majority
 ```
 
 ### NEXTAUTH_SECRET (Gerado para produção)
@@ -71,7 +71,7 @@ NEXTAUTH_SECRET=1NV7h+6U+spk5ZIRx8wMF9XI8NiX9p4MFBLLXTa9JhA=
 
 ### NEXTAUTH_URL
 ```
-NEXTAUTH_URL=https://minhafarm.vercel.app
+NEXTAUTH_URL=https://minhafarmmz.vercel.app
 ```
 
 ## ⚠️ Importante
