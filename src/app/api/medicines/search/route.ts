@@ -9,6 +9,8 @@ export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams;
     const query = searchParams.get('q');
 
+    console.log('Medicine search query:', query);
+
     if (!query) {
       return NextResponse.json(
         { error: 'Query parameter is required' },
@@ -17,6 +19,7 @@ export async function GET(request: NextRequest) {
     }
 
     await connectDB();
+    console.log('Connected to MongoDB for medicine search');
 
     // Search for medicines matching the query
     const medicines = await Medicine.find({
@@ -26,6 +29,8 @@ export async function GET(request: NextRequest) {
       ],
       active: true,
     }).limit(20);
+
+    console.log('Found medicines:', medicines.length);
 
     if (medicines.length === 0) {
       return NextResponse.json([]);
@@ -70,8 +75,14 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(results);
   } catch (error) {
     console.error('Error searching medicines:', error);
+    console.error('Error details:', error instanceof Error ? error.message : String(error));
+    console.error('Error stack:', error instanceof Error ? error.stack : 'No stack');
+    
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { 
+        error: 'Internal server error',
+        details: error instanceof Error ? error.message : String(error)
+      },
       { status: 500 }
     );
   }
