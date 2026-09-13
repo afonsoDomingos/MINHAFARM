@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import PharmacyDashboardNav from '@/components/PharmacyDashboardNav';
+import { symptoms } from '@/data/symptoms';
 
 interface Medicine {
   _id: string;
@@ -31,6 +32,8 @@ export default function PharmacyMedicinesPage() {
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [editingMedicine, setEditingMedicine] = useState<PharmacyMedicine | null>(null);
+  const [showQuickAddModal, setShowQuickAddModal] = useState(false);
+  const [selectedSymptom, setSelectedSymptom] = useState('');
   const [newMedicine, setNewMedicine] = useState({
     name: '',
     description: '',
@@ -152,6 +155,21 @@ export default function PharmacyMedicinesPage() {
     }
   };
 
+  const handleQuickAddMedicine = async (medicineName: string) => {
+    setNewMedicine({
+      name: medicineName,
+      description: '',
+      category: '',
+      dosage: '',
+      manufacturer: '',
+      requiresPrescription: false,
+      price: '',
+      quantity: '',
+    });
+    setShowQuickAddModal(false);
+    setShowAddModal(true);
+  };
+
   const handleToggleAvailability = async (id: string, available: boolean) => {
     try {
       const response = await fetch(`/api/pharmacies/my-pharmacy/medicines/${id}`, {
@@ -208,12 +226,20 @@ export default function PharmacyMedicinesPage() {
               Adicione e gerencie os medicamentos disponíveis na sua farmácia
             </p>
           </div>
-          <button
-            onClick={() => setShowAddModal(true)}
-            className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors"
-          >
-            + Adicionar Medicamento
-          </button>
+          <div className="flex gap-3">
+            <button
+              onClick={() => setShowQuickAddModal(true)}
+              className="bg-green-100 text-green-700 px-6 py-3 rounded-lg hover:bg-green-200 transition-colors"
+            >
+              Adição Rápida
+            </button>
+            <button
+              onClick={() => setShowAddModal(true)}
+              className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors"
+            >
+              + Adicionar Medicamento
+            </button>
+          </div>
         </div>
 
         {medicines.length === 0 ? (
@@ -229,12 +255,20 @@ export default function PharmacyMedicinesPage() {
             <p className="text-gray-600 mb-4">
               Comece adicionando medicamentos à sua farmácia
             </p>
-            <button
-              onClick={() => setShowAddModal(true)}
-              className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors"
-            >
-              Adicionar Primeiro Medicamento
-            </button>
+            <div className="flex gap-3 justify-center">
+              <button
+                onClick={() => setShowQuickAddModal(true)}
+                className="bg-green-100 text-green-700 px-6 py-3 rounded-lg hover:bg-green-200 transition-colors"
+              >
+                Adição Rápida
+              </button>
+              <button
+                onClick={() => setShowAddModal(true)}
+                className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors"
+              >
+                Adicionar Primeiro Medicamento
+              </button>
+            </div>
           </div>
         ) : (
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
@@ -620,6 +654,59 @@ export default function PharmacyMedicinesPage() {
                   </button>
                 </div>
               </form>
+            </div>
+          </div>
+        )}
+
+        {showQuickAddModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-lg p-6 max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-2xl font-bold text-gray-900">
+                  Adição Rápida por Sintoma
+                </h2>
+                <button
+                  onClick={() => setShowQuickAddModal(false)}
+                  className="text-gray-400 hover:text-gray-600"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+
+              <p className="text-gray-600 mb-6">
+                Selecione um sintoma para ver os medicamentos recomendados e adicione-os rapidamente ao seu inventário.
+              </p>
+
+              <div className="space-y-4">
+                {symptoms.map((symptom) => (
+                  <div key={symptom.id} className="border border-gray-200 rounded-lg p-4">
+                    <h3 className="font-semibold text-gray-900 mb-2">{symptom.name}</h3>
+                    <p className="text-sm text-gray-600 mb-3">{symptom.description}</p>
+                    <div className="flex flex-wrap gap-2">
+                      {symptom.suggestedMedicines.map((medicine) => (
+                        <button
+                          key={medicine}
+                          onClick={() => handleQuickAddMedicine(medicine)}
+                          className="px-4 py-2 bg-green-50 text-green-700 rounded-lg hover:bg-green-100 transition-colors text-sm font-medium"
+                        >
+                          + {medicine}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-6 flex justify-end">
+                <button
+                  onClick={() => setShowQuickAddModal(false)}
+                  className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
+                >
+                  Fechar
+                </button>
+              </div>
             </div>
           </div>
         )}
