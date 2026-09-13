@@ -144,19 +144,22 @@ export default function HomePage() {
       {/* CTA Section for Pharmacies */}
       <section className="py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-green-600 rounded-2xl p-12 text-center">
-            <h2 className="text-3xl font-bold text-white mb-4">
-              Tem uma farmácia? Junte-se à nossa plataforma
-            </h2>
-            <p className="text-green-100 text-lg mb-8 max-w-2xl mx-auto">
-              Ajude os seus clientes a encontrar os medicamentos disponíveis na sua farmácia e facilite o processo de atendimento
-            </p>
-            <Link
-              href="/pharmacy-register"
-              className="inline-block bg-white text-green-600 px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
-            >
-              Cadastrar Farmácia
-            </Link>
+          <div className="relative bg-cover bg-center bg-no-repeat rounded-2xl overflow-hidden" style={{ backgroundImage: 'url(/fundo01.jpg)' }}>
+            <div className="absolute inset-0 bg-green-600/90"></div>
+            <div className="relative z-10 p-12 text-center">
+              <h2 className="text-3xl font-bold text-white mb-4">
+                Tem uma farmácia? Junte-se à nossa plataforma
+              </h2>
+              <p className="text-green-100 text-lg mb-8 max-w-2xl mx-auto">
+                Ajude os seus clientes a encontrar os medicamentos disponíveis na sua farmácia e facilite o processo de atendimento
+              </p>
+              <Link
+                href="/pharmacy-register"
+                className="inline-block bg-white text-green-600 px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 transition-colors shadow-lg"
+              >
+                Cadastrar Farmácia
+              </Link>
+            </div>
           </div>
         </div>
       </section>
