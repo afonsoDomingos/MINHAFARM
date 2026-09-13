@@ -15,6 +15,10 @@ console.log('MongoDB URI:', MONGODB_URI ? MONGODB_URI.substring(0, 30) + '...' :
 
 async function checkData() {
   try {
+    if (!MONGODB_URI) {
+      throw new Error('MONGODB_URI is not defined');
+    }
+
     console.log('\n📊 Conectando ao MongoDB...');
     await mongoose.connect(MONGODB_URI, {
       serverSelectionTimeoutMS: 10000,

@@ -17,6 +17,10 @@ console.log('Connection string:', MONGODB_URI ? MONGODB_URI.substring(0, 30) + '
 
 async function seedData() {
   try {
+    if (!MONGODB_URI) {
+      throw new Error('MONGODB_URI is not defined');
+    }
+
     // Add connection options for better reliability
     await mongoose.connect(MONGODB_URI, {
       serverSelectionTimeoutMS: 10000,

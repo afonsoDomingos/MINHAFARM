@@ -10,6 +10,10 @@ console.log('MongoDB URI:', MONGODB_URI ? MONGODB_URI.substring(0, 40) + '...' :
 
 async function testConnection() {
   try {
+    if (!MONGODB_URI) {
+      throw new Error('MONGODB_URI is not defined');
+    }
+
     console.log('Attempting to connect...');
     
     // Try with different connection options
@@ -24,8 +28,11 @@ async function testConnection() {
     console.log('✅ Successfully connected to MongoDB!');
     
     // Test a simple query
-    const collections = await mongoose.connection.db.listCollections().toArray();
-    console.log('Collections:', collections.map(c => c.collectionName));
+    const db = mongoose.connection.db;
+    if (db) {
+      const collections = await db.listCollections().toArray();
+      console.log('Collections:', collections.map((c: any) => c.name || c.collectionName));
+    }
     
     await mongoose.disconnect();
     console.log('✅ Connection test completed successfully');
