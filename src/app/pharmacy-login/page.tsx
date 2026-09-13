@@ -1,20 +1,29 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { signIn } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 
 export default function PharmacyLoginPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (searchParams.get('registered') === 'true') {
+      setSuccess('Farmácia registada com sucesso! Aguardando aprovação do administrador.');
+    }
+  }, [searchParams]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    setSuccess('');
     setLoading(true);
 
     try {
@@ -27,8 +36,11 @@ export default function PharmacyLoginPage() {
       if (result?.error) {
         setError('Email ou password inválidos');
       } else {
-        router.push('/dashboard/pharmacy');
-        router.refresh();
+        setSuccess('Login realizado com sucesso! Redirecionando...');
+        setTimeout(() => {
+          router.push('/dashboard/pharmacy');
+          router.refresh();
+        }, 1000);
       }
     } catch (error) {
       setError('Erro ao fazer login. Tente novamente.');
@@ -53,6 +65,12 @@ export default function PharmacyLoginPage() {
           {error && (
             <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
               {error}
+            </div>
+          )}
+
+          {success && (
+            <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg">
+              {success}
             </div>
           )}
 
