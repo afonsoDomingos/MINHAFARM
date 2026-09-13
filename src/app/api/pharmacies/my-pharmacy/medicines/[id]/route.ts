@@ -4,6 +4,7 @@ import { authOptions } from '@/lib/auth';
 import connectDB from '@/lib/db/mongoose';
 import Pharmacy from '@/lib/models/Pharmacy';
 import PharmacyMedicine from '@/lib/models/PharmacyMedicine';
+import Medicine from '@/lib/models/Medicine';
 
 export async function PATCH(
   request: NextRequest,
@@ -21,7 +22,7 @@ export async function PATCH(
     }
 
     const body = await request.json();
-    const { available, price, quantity } = body;
+    const { available, price, quantity, name, description, category, dosage, manufacturer, requiresPrescription } = body;
 
     await connectDB();
 
@@ -48,9 +49,24 @@ export async function PATCH(
       );
     }
 
+    // Update pharmacy medicine fields
     if (available !== undefined) pharmacyMedicine.available = available;
     if (price !== undefined) pharmacyMedicine.price = price;
     if (quantity !== undefined) pharmacyMedicine.quantity = quantity;
+
+    // Update medicine details if provided
+    if (name || description || category || dosage || manufacturer || requiresPrescription !== undefined) {
+      const medicine = await Medicine.findById(pharmacyMedicine.medicineId);
+      if (medicine) {
+        if (name) medicine.name = name;
+        if (description !== undefined) medicine.description = description;
+        if (category) medicine.category = category;
+        if (dosage !== undefined) medicine.dosage = dosage;
+        if (manufacturer !== undefined) medicine.manufacturer = manufacturer;
+        if (requiresPrescription !== undefined) medicine.requiresPrescription = requiresPrescription;
+        await medicine.save();
+      }
+    }
 
     await pharmacyMedicine.save();
 

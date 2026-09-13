@@ -29,6 +29,8 @@ export default function PharmacyMedicinesPage() {
   const [medicines, setMedicines] = useState<PharmacyMedicine[]>([]);
   const [loading, setLoading] = useState(true);
   const [showAddModal, setShowAddModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editingMedicine, setEditingMedicine] = useState<PharmacyMedicine | null>(null);
   const [newMedicine, setNewMedicine] = useState({
     name: '',
     description: '',
@@ -92,6 +94,61 @@ export default function PharmacyMedicinesPage() {
       }
     } catch (error) {
       console.error('Error adding medicine:', error);
+    }
+  };
+
+  const handleEditMedicine = (medicine: PharmacyMedicine) => {
+    setEditingMedicine(medicine);
+    setNewMedicine({
+      name: medicine.medicineId.name,
+      description: medicine.medicineId.description || '',
+      category: medicine.medicineId.category,
+      dosage: medicine.medicineId.dosage || '',
+      manufacturer: medicine.medicineId.manufacturer || '',
+      requiresPrescription: medicine.medicineId.requiresPrescription,
+      price: medicine.price.toString(),
+      quantity: medicine.quantity.toString(),
+    });
+    setShowEditModal(true);
+  };
+
+  const handleUpdateMedicine = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingMedicine) return;
+
+    try {
+      const response = await fetch(`/api/pharmacies/my-pharmacy/medicines/${editingMedicine._id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: newMedicine.name,
+          description: newMedicine.description,
+          category: newMedicine.category,
+          dosage: newMedicine.dosage,
+          manufacturer: newMedicine.manufacturer,
+          requiresPrescription: newMedicine.requiresPrescription,
+          price: parseFloat(newMedicine.price),
+          quantity: parseInt(newMedicine.quantity),
+        }),
+      });
+
+      if (response.ok) {
+        setShowEditModal(false);
+        setEditingMedicine(null);
+        setNewMedicine({
+          name: '',
+          description: '',
+          category: '',
+          dosage: '',
+          manufacturer: '',
+          requiresPrescription: false,
+          price: '',
+          quantity: '',
+        });
+        fetchMedicines();
+      }
+    } catch (error) {
+      console.error('Error updating medicine:', error);
     }
   };
 
@@ -240,7 +297,13 @@ export default function PharmacyMedicinesPage() {
                         {item.available ? 'Disponível' : 'Indisponível'}
                       </button>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-2">
+                      <button
+                        onClick={() => handleEditMedicine(item)}
+                        className="text-green-600 hover:text-green-900"
+                      >
+                        Editar
+                      </button>
                       <button
                         onClick={() => handleDeleteMedicine(item._id)}
                         className="text-red-600 hover:text-red-900"
@@ -401,6 +464,159 @@ export default function PharmacyMedicinesPage() {
                     className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
                   >
                     Adicionar
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {showEditModal && editingMedicine && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-lg p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-2xl font-bold text-gray-900">
+                  Editar Medicamento
+                </h2>
+                <button
+                  onClick={() => setShowEditModal(false)}
+                  className="text-gray-400 hover:text-gray-600"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+
+              <form onSubmit={handleUpdateMedicine} className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Nome do Medicamento *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={newMedicine.name}
+                    onChange={(e) => setNewMedicine({ ...newMedicine, name: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-green-500 focus:border-green-500"
+                    placeholder="Paracetamol 500 mg"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Descrição
+                  </label>
+                  <textarea
+                    value={newMedicine.description}
+                    onChange={(e) => setNewMedicine({ ...newMedicine, description: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-green-500 focus:border-green-500"
+                    rows={3}
+                    placeholder="Descrição do medicamento"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Categoria *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={newMedicine.category}
+                    onChange={(e) => setNewMedicine({ ...newMedicine, category: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-green-500 focus:border-green-500"
+                    placeholder="Analgésicos"
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Dosagem
+                    </label>
+                    <input
+                      type="text"
+                      value={newMedicine.dosage}
+                      onChange={(e) => setNewMedicine({ ...newMedicine, dosage: e.target.value })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-green-500 focus:border-green-500"
+                      placeholder="500 mg"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Fabricante
+                    </label>
+                    <input
+                      type="text"
+                      value={newMedicine.manufacturer}
+                      onChange={(e) => setNewMedicine({ ...newMedicine, manufacturer: e.target.value })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-green-500 focus:border-green-500"
+                      placeholder="Nome do fabricante"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex items-center">
+                  <input
+                    type="checkbox"
+                    id="requiresPrescription"
+                    checked={newMedicine.requiresPrescription}
+                    onChange={(e) => setNewMedicine({ ...newMedicine, requiresPrescription: e.target.checked })}
+                    className="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded"
+                  />
+                  <label htmlFor="requiresPrescription" className="ml-2 block text-sm text-gray-700">
+                    Requer receita médica
+                  </label>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Preço (MT) *
+                    </label>
+                    <input
+                      type="number"
+                      required
+                      min="0"
+                      step="0.01"
+                      value={newMedicine.price}
+                      onChange={(e) => setNewMedicine({ ...newMedicine, price: e.target.value })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-green-500 focus:border-green-500"
+                      placeholder="150.00"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Quantidade *
+                    </label>
+                    <input
+                      type="number"
+                      required
+                      min="0"
+                      value={newMedicine.quantity}
+                      onChange={(e) => setNewMedicine({ ...newMedicine, quantity: e.target.value })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-green-500 focus:border-green-500"
+                      placeholder="10"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex justify-end gap-3 pt-4">
+                  <button
+                    type="button"
+                    onClick={() => setShowEditModal(false)}
+                    className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+                  >
+                    Atualizar
                   </button>
                 </div>
               </form>
