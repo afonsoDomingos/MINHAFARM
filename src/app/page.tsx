@@ -17,8 +17,8 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen">
-      {/* Hero Section with Banner Image */}
-      <section className="relative h-[600px] bg-cover bg-center bg-no-repeat" style={{ backgroundImage: 'url(/banner.jpg)' }}>
+      {/* Hero Section with Responsive Banner */}
+      <section className="relative h-[600px] md:h-[500px] bg-cover bg-center bg-no-repeat hidden md:block" style={{ backgroundImage: 'url(/bannerhorizontal.jpg)' }}>
         <div className="absolute inset-0 bg-gradient-to-r from-green-900/90 to-green-700/70"></div>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 h-full flex items-center">
           <div className="text-center w-full">
@@ -26,6 +26,47 @@ export default function HomePage() {
               Encontre o seu medicamento perto de si
             </h1>
             <p className="text-xl text-green-100 mb-8 max-w-2xl mx-auto drop-shadow-lg">
+              Pesquise medicamentos disponíveis nas farmácias cadastradas em Moçambique
+            </p>
+
+            {/* Search Bar */}
+            <form onSubmit={handleSearch} className="max-w-2xl mx-auto">
+              <div className="flex flex-col sm:flex-row gap-4">
+                <div className="flex-1 relative">
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Procure pelo nome do medicamento"
+                    className="w-full px-6 py-4 text-lg border-2 border-white rounded-lg focus:outline-none focus:border-green-300 focus:ring-2 focus:ring-green-200 bg-white/95 backdrop-blur"
+                  />
+                  <div className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400">
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                  </div>
+                </div>
+                <button
+                  type="submit"
+                  className="bg-white text-green-700 px-8 py-4 text-lg font-semibold rounded-lg hover:bg-green-50 transition-colors shadow-lg"
+                >
+                  Pesquisar
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      {/* Mobile Hero Section */}
+      <section className="relative h-[700px] bg-cover bg-center bg-no-repeat md:hidden" style={{ backgroundImage: 'url(/bannervertical.jpg)' }}>
+        <div className="absolute inset-0 bg-gradient-to-r from-green-900/90 to-green-700/70"></div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 h-full flex items-center">
+          <div className="text-center w-full">
+            <h1 className="text-3xl md:text-4xl font-bold text-white mb-4 drop-shadow-2xl">
+              Encontre o seu medicamento perto de si
+            </h1>
+            <p className="text-lg text-green-100 mb-8 max-w-2xl mx-auto drop-shadow-lg">
               Pesquise medicamentos disponíveis nas farmácias cadastradas em Moçambique
             </p>
 
