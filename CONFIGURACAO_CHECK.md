@@ -16,7 +16,7 @@
 |----------|-------|--------|
 | **MONGODB_URI** | `mongodb+srv://karinganastudio23:VIbemongodb@cluster0.oe0akin.mongodb.net/conectlifedb?retryWrites=true&w=majority` | ✅ Documentado |
 | **NEXTAUTH_SECRET** | `1NV7h+6U+spk5ZIRx8wMF9XI8NiX9p4MFBLLXTa9JhA=` | ✅ Gerado |
-| **NEXTAUTH_URL** | `https://conectlifemz.vercel.app` | ✅ Configurado |
+| **NEXTAUTH_URL** | `https://conectlife.vercel.app` | ✅ Configurado |
 
 ### 📁 Arquivos de Configuração
 
@@ -86,10 +86,10 @@ npm run check-data       # Verificar dados no MongoDB
 1. Configurar variáveis na Vercel:
    - MONGODB_URI: `mongodb+srv://karinganastudio23:VIbemongodb@cluster0.oe0akin.mongodb.net/conectlifedb?retryWrites=true&w=majority`
    - NEXTAUTH_SECRET: `1NV7h+6U+spk5ZIRx8wMF9XI8NiX9p4MFBLLXTa9JhA=`
-   - NEXTAUTH_URL: `https://conectlifemz.vercel.app`
+   - NEXTAUTH_URL: `https://conectlife.vercel.app`
 2. Trigger redeploy
 3. A Vercel deve conectar ao MongoDB Atlas
-4. Testar em https://conectlifemz.vercel.app
+4. Testar em https://conectlife.vercel.app
 
 ### Opção 3: Testar Sem Dados (Funciona Agora)
 1. Aceder a http://localhost:3000
