@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation';
 import { useCart } from '@/contexts/CartContext';
 import { useSession } from 'next-auth/react';
 
+const DELIVERY_FEE = 100; // Taxa fixa de entrega em MT
+
 export default function CheckoutPage() {
   const router = useRouter();
   const { data: session } = useSession();
@@ -17,6 +19,7 @@ export default function CheckoutPage() {
   const [mounted, setMounted] = useState(false);
 
   const pharmacyGroupedItems = getPharmacyGroupedItems();
+  const totalWithDelivery = getCartTotal() + (deliveryMethod === 'delivery' ? DELIVERY_FEE : 0);
 
   useEffect(() => {
     setMounted(true);
@@ -63,10 +66,11 @@ export default function CheckoutPage() {
             price: item.price,
           }));
 
-          const totalAmount = pharmacyItems.reduce(
+          const subtotal = pharmacyItems.reduce(
             (total, item) => total + item.price * item.quantity,
             0
           );
+          const totalAmount = subtotal + (deliveryMethod === 'delivery' ? DELIVERY_FEE : 0);
 
           return fetch('/api/orders', {
             method: 'POST',
@@ -148,11 +152,27 @@ export default function CheckoutPage() {
               ))}
             </div>
 
-            <div className="mt-4 pt-4 border-t border-gray-200 flex justify-between items-center">
-              <span className="text-xl font-semibold text-gray-900">Total</span>
-              <span className="text-2xl font-bold text-gray-900">
-                {getCartTotal().toLocaleString('pt-MZ')} MT
-              </span>
+            <div className="mt-4 pt-4 border-t border-gray-200 space-y-2">
+              <div className="flex justify-between items-center">
+                <span className="text-gray-600">Subtotal</span>
+                <span className="text-gray-900">
+                  {getCartTotal().toLocaleString('pt-MZ')} MT
+                </span>
+              </div>
+              {deliveryMethod === 'delivery' && (
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-600">Taxa de Entrega</span>
+                  <span className="text-gray-900">
+                    {DELIVERY_FEE.toLocaleString('pt-MZ')} MT
+                  </span>
+                </div>
+              )}
+              <div className="flex justify-between items-center pt-2 border-t border-gray-200">
+                <span className="text-xl font-semibold text-gray-900">Total</span>
+                <span className="text-2xl font-bold text-gray-900">
+                  {totalWithDelivery.toLocaleString('pt-MZ')} MT
+                </span>
+              </div>
             </div>
           </div>
 
@@ -195,7 +215,7 @@ export default function CheckoutPage() {
                     Entrega em Casa
                   </span>
                   <span className="block text-sm text-gray-500">
-                    Receba o pedido no seu endereço
+                    Receba o pedido no seu endereço (+{DELIVERY_FEE.toLocaleString('pt-MZ')} MT)
                   </span>
                 </div>
               </label>
