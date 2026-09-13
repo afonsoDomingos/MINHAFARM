@@ -11,7 +11,7 @@ export default function Header() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <Link href="/" className="flex items-center">
-            <img src="/MinhaFarm.png" alt="ConectLife Logo" className="h-14 w-auto" />
+            <img src="/MinhaFarm.png" alt="ConectLife Logo" className="h-20 w-auto" />
           </Link>
 
           <nav className="hidden md:flex items-center space-x-8">
