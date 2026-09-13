@@ -25,6 +25,8 @@ export default function RegisterPage() {
     openingHours: '',
   });
   const [customOpeningHours, setCustomOpeningHours] = useState('');
+  const [customNeighborhood, setCustomNeighborhood] = useState('');
+  const [useCustomNeighborhood, setUseCustomNeighborhood] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -430,22 +432,55 @@ export default function RegisterPage() {
                       <label htmlFor="neighborhood" className="block text-sm font-medium text-gray-700 mb-1">
                         Bairro *
                       </label>
-                      <select
-                        id="neighborhood"
-                        name="neighborhood"
-                        required
-                        value={formData.neighborhood}
-                        onChange={handleChange}
-                        disabled={!formData.city}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-green-500 focus:border-green-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
-                      >
-                        <option value="">Selecione primeiro a cidade</option>
-                        {formData.city && neighborhoodsByProvince[formData.city]?.map((neighborhood) => (
-                          <option key={neighborhood} value={neighborhood}>
-                            {neighborhood}
-                          </option>
-                        ))}
-                      </select>
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-2">
+                          <input
+                            type="checkbox"
+                            id="useCustomNeighborhood"
+                            checked={useCustomNeighborhood}
+                            onChange={(e) => {
+                              setUseCustomNeighborhood(e.target.checked);
+                              if (e.target.checked) {
+                                setFormData({ ...formData, neighborhood: '' });
+                              }
+                            }}
+                            className="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300"
+                          />
+                          <label htmlFor="useCustomNeighborhood" className="text-sm text-gray-700">
+                            Digitar bairro manualmente
+                          </label>
+                        </div>
+                        
+                        {!useCustomNeighborhood ? (
+                          <select
+                            id="neighborhood"
+                            name="neighborhood"
+                            required
+                            value={formData.neighborhood}
+                            onChange={handleChange}
+                            disabled={!formData.city}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-green-500 focus:border-green-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
+                          >
+                            <option value="">Selecione primeiro a cidade</option>
+                            {formData.city && neighborhoodsByProvince[formData.city]?.map((neighborhood) => (
+                              <option key={neighborhood} value={neighborhood}>
+                                {neighborhood}
+                              </option>
+                            ))}
+                          </select>
+                        ) : (
+                          <input
+                            type="text"
+                            id="neighborhood"
+                            name="neighborhood"
+                            required
+                            value={formData.neighborhood}
+                            onChange={handleChange}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-green-500 focus:border-green-500"
+                            placeholder="Digite o nome do bairro"
+                          />
+                        )}
+                      </div>
                     </div>
 
                     <div>
