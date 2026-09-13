@@ -270,13 +270,23 @@ export default function CheckoutPage() {
             >
               Voltar
             </button>
-            <button
-              type="submit"
-              disabled={loading}
-              className="flex-1 py-3 px-4 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {loading ? 'A processar...' : 'Confirmar Pedido'}
-            </button>
+            {!session ? (
+              <button
+                type="button"
+                onClick={() => router.push('/login?redirect=/checkout')}
+                className="flex-1 py-3 px-4 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium"
+              >
+                Fazer Login
+              </button>
+            ) : (
+              <button
+                type="submit"
+                disabled={loading}
+                className="flex-1 py-3 px-4 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {loading ? 'A processar...' : 'Confirmar Pedido'}
+              </button>
+            )}
           </div>
         </form>
       </div>
