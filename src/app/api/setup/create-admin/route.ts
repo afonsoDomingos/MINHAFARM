@@ -1,71 +1,59 @@
-import { NextResponse } from 'next/server';
-import bcrypt from 'bcryptjs';
+import { NextRequest, NextResponse } from 'next/server';
 import connectDB from '@/lib/db/mongoose';
 import User from '@/lib/models/User';
-import Medicine from '@/lib/models/Medicine';
+import bcrypt from 'bcryptjs';
 
-export async function POST() {
+export async function POST(request: NextRequest) {
   try {
-    await connectDB();
+    const body = await request.json();
+    const { email, password, name } = body;
 
-    // Check if admin already exists
-    const existingAdmin = await User.findOne({ email: 'admin@conectlife.co.mz' });
-    if (existingAdmin) {
+    // Validação básica
+    if (!email || !password || !name) {
       return NextResponse.json(
-        { error: 'Admin user already exists' },
+        { error: 'Email, password e name são obrigatórios' },
         { status: 400 }
       );
     }
 
-    // Create admin user
-    const hashedPassword = await bcrypt.hash('admin123', 10);
+    await connectDB();
+
+    // Verificar se admin já existe
+    const existingAdmin = await User.findOne({ email });
+    if (existingAdmin) {
+      return NextResponse.json(
+        { error: 'Usuário com este email já existe' },
+        { status: 400 }
+      );
+    }
+
+    // Criar hash da password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Criar usuário admin
     const admin = await User.create({
-      name: 'Administrador',
-      email: 'admin@conectlife.co.mz',
+      name,
+      email,
       password: hashedPassword,
       role: 'admin',
     });
 
-    // Create some sample medicines
-    const medicines = await Medicine.create([
+    return NextResponse.json(
       {
-        name: 'Paracetamol 500 mg',
-        description: 'Analgésico e antitérmico',
-        category: 'Analgésicos',
-        dosage: '500 mg',
-        manufacturer: 'Generico',
-        requiresPrescription: false,
+        message: 'Admin criado com sucesso',
+        admin: {
+          id: admin._id,
+          name: admin.name,
+          email: admin.email,
+          role: admin.role,
+        },
       },
-      {
-        name: 'Ibuprofeno 400 mg',
-        description: 'Anti-inflamatório',
-        category: 'Anti-inflamatórios',
-        dosage: '400 mg',
-        manufacturer: 'Generico',
-        requiresPrescription: false,
-      },
-      {
-        name: 'Amoxicilina 500 mg',
-        description: 'Antibiótico',
-        category: 'Antibióticos',
-        dosage: '500 mg',
-        manufacturer: 'Generico',
-        requiresPrescription: true,
-      },
-    ]);
-
-    return NextResponse.json({
-      success: true,
-      message: 'Admin and sample medicines created successfully',
-      admin: {
-        email: admin.email,
-        password: 'admin123',
-      },
-    });
-  } catch (error: any) {
+      { status: 201 }
+    );
+  } catch (error) {
     console.error('Error creating admin:', error);
     return NextResponse.json(
-      { error: error.message || 'Error creating admin' },
+      { error: 'Erro ao criar admin' },
       { status: 500 }
     );
   }
