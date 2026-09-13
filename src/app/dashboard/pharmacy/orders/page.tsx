@@ -32,6 +32,8 @@ export default function PharmacyOrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<string>('all');
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
 
   useEffect(() => {
     fetchOrders();
@@ -52,6 +54,9 @@ export default function PharmacyOrdersPage() {
   };
 
   const handleUpdateStatus = async (orderId: string, newStatus: string, rejectionReason?: string) => {
+    setError('');
+    setSuccess('');
+    
     try {
       const response = await fetch(`/api/pharmacies/my-pharmacy/orders/${orderId}`, {
         method: 'PATCH',
@@ -59,10 +64,17 @@ export default function PharmacyOrdersPage() {
         body: JSON.stringify({ status: newStatus, rejectionReason }),
       });
 
+      const data = await response.json();
+
       if (response.ok) {
+        setSuccess(`Status do pedido atualizado para ${statusLabels[newStatus as keyof typeof statusLabels]}`);
         fetchOrders();
+        setTimeout(() => setSuccess(''), 3000);
+      } else {
+        setError(data.error || 'Erro ao atualizar status do pedido');
       }
     } catch (error) {
+      setError('Erro ao atualizar status do pedido');
       console.error('Error updating order:', error);
     }
   };
@@ -107,6 +119,16 @@ export default function PharmacyOrdersPage() {
     <div className="min-h-screen bg-gray-50 py-8">
       <PharmacyDashboardNav />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {error && (
+          <div className="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+            {error}
+          </div>
+        )}
+        {success && (
+          <div className="mb-4 bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg">
+            {success}
+          </div>
+        )}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
             Gestão de Pedidos
