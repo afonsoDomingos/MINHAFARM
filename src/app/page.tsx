@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { symptoms } from '@/data/symptoms';
@@ -8,7 +8,35 @@ import { symptoms } from '@/data/symptoms';
 export default function HomePage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedSymptom, setSelectedSymptom] = useState('');
+  const [typedText, setTypedText] = useState('');
+  const [isTyping, setIsTyping] = useState(true);
   const router = useRouter();
+  const fullText = 'ConectLife';
+
+  useEffect(() => {
+    let index = 0;
+    let timeout: NodeJS.Timeout;
+
+    const typeWriter = () => {
+      if (index < fullText.length) {
+        setTypedText(fullText.substring(0, index + 1));
+        index++;
+        timeout = setTimeout(typeWriter, 150);
+      } else {
+        setIsTyping(false);
+        timeout = setTimeout(() => {
+          setTypedText('');
+          index = 0;
+          setIsTyping(true);
+          timeout = setTimeout(typeWriter, 500);
+        }, 2000);
+      }
+    };
+
+    typeWriter();
+
+    return () => clearTimeout(timeout);
+  }, []);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,7 +61,8 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 h-full flex items-center">
           <div className="text-center w-full">
             <h1 className="text-4xl md:text-6xl font-bold text-white mb-4 drop-shadow-2xl">
-              ConectLife
+              {typedText}
+              <span className="animate-pulse">|</span>
             </h1>
             <p className="text-xl text-green-100 mb-8 max-w-2xl mx-auto drop-shadow-lg">
               Encontrar o que precisa, quando precisa, onde precisa
@@ -94,7 +123,8 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 h-full flex items-center">
           <div className="text-center w-full">
             <h1 className="text-3xl md:text-4xl font-bold text-white mb-4 drop-shadow-2xl">
-              ConectLife
+              {typedText}
+              <span className="animate-pulse">|</span>
             </h1>
             <p className="text-lg text-green-100 mb-8 max-w-2xl mx-auto drop-shadow-lg">
               Encontrar o que precisa, quando precisa, onde precisa
