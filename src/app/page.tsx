@@ -22,7 +22,6 @@ export default function HomePage() {
         <div className="absolute inset-0 bg-gradient-to-r from-green-900/90 to-green-700/70"></div>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 h-full flex items-center">
           <div className="text-center w-full">
-            <img src="/logominhafarm.png" alt="ConectLife Logo" className="h-24 w-auto mx-auto mb-8" />
             <h1 className="text-4xl md:text-6xl font-bold text-white mb-4">
               Encontre o seu medicamento perto de si
             </h1>
