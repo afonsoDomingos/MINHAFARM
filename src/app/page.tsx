@@ -17,14 +17,16 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen">
-      {/* Hero Section */}
-      <section className="bg-gradient-to-b from-green-50 to-white py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Hero Section with Banner */}
+      <section className="relative bg-gradient-to-br from-green-600 to-green-800 py-24">
+        <div className="absolute inset-0 bg-black/20"></div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center">
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+            <img src="/MinhaFarm.png" alt="ConectLife Logo" className="h-24 w-auto mx-auto mb-8" />
+            <h1 className="text-4xl md:text-6xl font-bold text-white mb-4">
               Encontre o seu medicamento perto de si
             </h1>
-            <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
+            <p className="text-xl text-green-100 mb-8 max-w-2xl mx-auto">
               Pesquise medicamentos disponíveis nas farmácias cadastradas em Moçambique
             </p>
 
@@ -37,7 +39,7 @@ export default function HomePage() {
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder="Procure pelo nome do medicamento"
-                    className="w-full px-6 py-4 text-lg border-2 border-gray-300 rounded-lg focus:outline-none focus:border-green-600 focus:ring-2 focus:ring-green-200"
+                    className="w-full px-6 py-4 text-lg border-2 border-white rounded-lg focus:outline-none focus:border-green-300 focus:ring-2 focus:ring-green-200 bg-white/95 backdrop-blur"
                   />
                   <div className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400">
                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -47,7 +49,7 @@ export default function HomePage() {
                 </div>
                 <button
                   type="submit"
-                  className="bg-green-600 text-white px-8 py-4 text-lg font-semibold rounded-lg hover:bg-green-700 transition-colors"
+                  className="bg-white text-green-700 px-8 py-4 text-lg font-semibold rounded-lg hover:bg-green-50 transition-colors shadow-lg"
                 >
                   Pesquisar
                 </button>
