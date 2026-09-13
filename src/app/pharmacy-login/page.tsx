@@ -100,12 +100,9 @@ export default function PharmacyLoginPage() {
             </button>
           </div>
 
-          <div className="text-center space-y-2">
+          <div className="text-center">
             <Link href="/register" className="block text-sm text-green-600 hover:text-green-500">
               Não tem conta? Cadastrar farmácia
-            </Link>
-            <Link href="/forgot-password" className="block text-sm text-green-600 hover:text-green-500">
-              Esqueceu a password?
             </Link>
           </div>
         </form>
