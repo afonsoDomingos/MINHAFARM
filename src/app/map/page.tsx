@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 
@@ -45,6 +45,11 @@ export default function MapPage() {
   const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
   const [filterRadius, setFilterRadius] = useState<number>(100);
   const [selectedPharmacy, setSelectedPharmacy] = useState<Pharmacy | null>(null);
+  const [routeToPharmacy, setRouteToPharmacy] = useState<Pharmacy | null>(null);
+  const [routeDistance, setRouteDistance] = useState<string>('');
+  const [routeTime, setRouteTime] = useState<string>('');
+  const mapRef = useRef<any>(null);
+  const routingControlRef = useRef<any>(null);
 
   useEffect(() => {
     fetchPharmacies();
@@ -103,6 +108,13 @@ export default function MapPage() {
       );
       return distance <= filterRadius;
     });
+  };
+
+  const handleShowRoute = (pharmacy: Pharmacy) => {
+    if (!userLocation || !pharmacy.location) return;
+
+    const googleMapsUrl = `https://www.google.com/maps/dir/?api=1&origin=${userLocation[0]},${userLocation[1]}&destination=${pharmacy.location.coordinates[1]},${pharmacy.location.coordinates[0]}&travelmode=driving`;
+    window.open(googleMapsUrl, '_blank');
   };
 
   const filteredPharmacies = getFilteredPharmacies();
@@ -228,12 +240,20 @@ export default function MapPage() {
                                 {distance} km de distância
                               </p>
                             )}
-                            <Link
-                              href={`/pharmacy/${pharmacy._id}`}
-                              className="inline-block text-sm text-green-600 hover:text-green-700 font-medium"
-                            >
-                              Ver detalhes →
-                            </Link>
+                            <div className="flex flex-col gap-2 mt-3">
+                              <button
+                                onClick={() => handleShowRoute(pharmacy)}
+                                className="inline-flex items-center justify-center px-3 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors"
+                              >
+                                🗺️ Ver Rota no Google Maps
+                              </button>
+                              <Link
+                                href={`/pharmacy/${pharmacy._id}`}
+                                className="inline-block text-sm text-green-600 hover:text-green-700 font-medium text-center"
+                              >
+                                Ver detalhes →
+                              </Link>
+                            </div>
                           </div>
                         </Popup>
                       </Marker>
@@ -276,12 +296,23 @@ export default function MapPage() {
                             {distance} km
                           </p>
                         )}
-                        <Link
-                          href={`/pharmacy/${pharmacy._id}`}
-                          className="inline-block mt-2 text-sm text-green-600 hover:text-green-700 font-medium"
-                        >
-                          Ver detalhes →
-                        </Link>
+                        <div className="flex gap-2 mt-2">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleShowRoute(pharmacy);
+                            }}
+                            className="inline-flex items-center px-3 py-1.5 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                          >
+                            🗺️ Rota
+                          </button>
+                          <Link
+                            href={`/pharmacy/${pharmacy._id}`}
+                            className="inline-flex items-center px-3 py-1.5 text-sm bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                          >
+                            Detalhes
+                          </Link>
+                        </div>
                       </div>
                     );
                   })}
@@ -321,6 +352,16 @@ export default function MapPage() {
                     <div>
                       <p className="text-sm font-medium text-gray-700">Avaliação</p>
                       <p className="text-sm text-gray-900">⭐ {selectedPharmacy.rating}/5</p>
+                    </div>
+                  )}
+                  {userLocation && selectedPharmacy.location && (
+                    <div className="pt-4 border-t border-gray-200">
+                      <button
+                        onClick={() => handleShowRoute(selectedPharmacy)}
+                        className="w-full inline-flex items-center justify-center px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors"
+                      >
+                        🗺️ Ver Rota no Google Maps
+                      </button>
                     </div>
                   )}
                 </div>
