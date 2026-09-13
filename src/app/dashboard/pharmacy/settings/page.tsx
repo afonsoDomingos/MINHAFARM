@@ -125,17 +125,33 @@ export default function PharmacySettingsPage() {
     );
   };
 
-  const parseGoogleMapsLink = (link: string) => {
+  const parseGoogleMapsLink = async (link: string) => {
     setParsingLink(true);
     setMessage('');
 
     try {
+      let actualLink = link;
       let lat: number | null = null;
       let lng: number | null = null;
 
+      // Check if it's a shortened link
+      if (link.includes('goo.gl') || link.includes('maps.app')) {
+        try {
+          // Try to resolve the shortened link
+          const response = await fetch(link, {
+            method: 'HEAD',
+            redirect: 'follow',
+          });
+          actualLink = response.url;
+        } catch (error) {
+          // If fetch fails, just use the original link
+          actualLink = link;
+        }
+      }
+
       // Try different Google Maps URL formats
       // Format 1: @lat,lng,z
-      const atMatch = link.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
+      const atMatch = actualLink.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
       if (atMatch) {
         lat = parseFloat(atMatch[1]);
         lng = parseFloat(atMatch[2]);
@@ -143,7 +159,7 @@ export default function PharmacySettingsPage() {
 
       // Format 2: q=lat,lng
       if (!lat) {
-        const qMatch = link.match(/[?&]q=(-?\d+\.\d+),(-?\d+\.\d+)/);
+        const qMatch = actualLink.match(/[?&]q=(-?\d+\.\d+),(-?\d+\.\d+)/);
         if (qMatch) {
           lat = parseFloat(qMatch[1]);
           lng = parseFloat(qMatch[2]);
@@ -152,7 +168,7 @@ export default function PharmacySettingsPage() {
 
       // Format 3: /lat,lng
       if (!lat) {
-        const pathMatch = link.match(/\/(-?\d+\.\d+),(-?\d+\.\d+)/);
+        const pathMatch = actualLink.match(/\/(-?\d+\.\d+),(-?\d+\.\d+)/);
         if (pathMatch) {
           lat = parseFloat(pathMatch[1]);
           lng = parseFloat(pathMatch[2]);
@@ -168,10 +184,10 @@ export default function PharmacySettingsPage() {
         });
         setMessage('Coordenadas extraídas do link do Google Maps com sucesso!');
       } else {
-        setMessage('Não foi possível extrair coordenadas do link. Verifique se o link está correto.');
+        setMessage('Não foi possível extrair coordenadas do link. Tente abrir o link no Google Maps e copiar o URL completo da barra de endereços.');
       }
     } catch (error) {
-      setMessage('Erro ao processar o link. Verifique se está correto.');
+      setMessage('Erro ao processar o link. Tente abrir o link no Google Maps e copiar o URL completo da barra de endereços.');
     } finally {
       setParsingLink(false);
     }
