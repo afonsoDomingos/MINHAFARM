@@ -76,9 +76,7 @@ export default function PharmacyRegisterPage() {
       <div className="max-w-2xl mx-auto">
         <div>
           <div className="flex justify-center">
-            <div className="w-16 h-16 bg-green-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-3xl">M</span>
-            </div>
+            <img src="/logominhafarm.png" alt="MINHAFARM Logo" className="h-20 w-auto" />
           </div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
             Cadastrar Farmácia
