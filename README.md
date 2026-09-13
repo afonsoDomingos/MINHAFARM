@@ -47,6 +47,12 @@ NEXTAUTH_SECRET=seu-secret-aqui
 mongod
 ```
 
+Se não tiver MongoDB instalado localmente, pode usar MongoDB Atlas (gratuito):
+- Crie uma conta em https://www.mongodb.com/cloud/atlas
+- Crie um cluster gratuito
+- Copie a connection string
+- Atualize o MONGODB_URI no .env.local com a connection string do Atlas
+
 5. Crie o utilizador administrador:
 ```bash
 npm run create-admin
@@ -59,7 +65,21 @@ Isto criará:
 
 ⚠️ **Importante**: Altere a password do administrador após o primeiro login!
 
-6. Inicie o servidor de desenvolvimento:
+6. Adicione dados de teste (farmácias e medicamentos):
+```bash
+npm run seed-data
+```
+
+Isto criará:
+- 2 farmácias de teste (Farmácia Central e Farmácia São João)
+- 5 medicamentos diferentes
+- Preços e disponibilidade em ambas as farmácias
+
+Credenciais das farmácias de teste:
+- Email: `farmacia1@minhafarm.co.mz` / Password: `pharmacy123`
+- Email: `farmacia2@minhafarm.co.mz` / Password: `pharmacy123`
+
+7. Inicie o servidor de desenvolvimento:
 ```bash
 npm run dev
 ```

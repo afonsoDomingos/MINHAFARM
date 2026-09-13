@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "create-admin": "ts-node --compiler-options {\"module\":\"commonjs\"} scripts/create-admin.ts"
+    "create-admin": "tsx scripts/create-admin.ts",
+    "seed-data": "tsx scripts/seed-data.ts"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",
@@ -27,6 +28,7 @@
     "eslint-config-next": "16.3.5",
     "tailwindcss": "^4",
     "ts-node": "^10.9.2",
+    "tsx": "^4.23.13",
     "typescript": "^5"
   }
 }
