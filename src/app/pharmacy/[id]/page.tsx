@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
+import { useCart } from '@/contexts/CartContext';
 
 interface Pharmacy {
   _id: string;
@@ -38,6 +39,7 @@ interface PharmacyMedicine {
 export default function PharmacyDetailPage() {
   const params = useParams();
   const { data: session } = useSession();
+  const { addToCart } = useCart();
   const [pharmacy, setPharmacy] = useState<Pharmacy | null>(null);
   const [medicines, setMedicines] = useState<PharmacyMedicine[]>([]);
   const [loading, setLoading] = useState(true);
@@ -191,8 +193,13 @@ export default function PharmacyDetailPage() {
                         {session ? (
                           <button
                             onClick={() => {
-                              // TODO: Implement add to order functionality
-                              console.log('Add to order:', item.medicineId.name);
+                              addToCart({
+                                pharmacyId: pharmacy._id,
+                                pharmacyName: pharmacy.name,
+                                medicineId: item.medicineId._id,
+                                medicineName: item.medicineId.name,
+                                price: item.price,
+                              });
                             }}
                             className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
                           >
