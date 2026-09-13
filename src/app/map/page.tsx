@@ -50,11 +50,24 @@ export default function MapPage() {
   const [routeTime, setRouteTime] = useState<string>('');
   const mapRef = useRef<any>(null);
   const routingControlRef = useRef<any>(null);
+  const [mapZoom, setMapZoom] = useState<number>(userLocation ? 13 : 12);
 
   useEffect(() => {
     fetchPharmacies();
     getUserLocation();
   }, []);
+
+  useEffect(() => {
+    // Adjust zoom based on filter radius
+    if (filterRadius <= 5) setMapZoom(14);
+    else if (filterRadius <= 10) setMapZoom(13);
+    else if (filterRadius <= 25) setMapZoom(12);
+    else if (filterRadius <= 50) setMapZoom(11);
+    else if (filterRadius <= 100) setMapZoom(10);
+    else if (filterRadius <= 200) setMapZoom(9);
+    else if (filterRadius <= 500) setMapZoom(8);
+    else setMapZoom(7);
+  }, [filterRadius]);
 
   const fetchPharmacies = async () => {
     try {
@@ -196,7 +209,7 @@ export default function MapPage() {
               <div className="h-[600px]">
                 <MapContainer
                   center={centerLocation as [number, number]}
-                  zoom={userLocation ? 13 : 12}
+                  zoom={mapZoom}
                   style={{ height: '100%', width: '100%' }}
                 >
                   <TileLayer
