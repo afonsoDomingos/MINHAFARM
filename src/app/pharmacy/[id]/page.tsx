@@ -194,13 +194,6 @@ export default function PharmacyDetailPage() {
                         </p>
                         <button
                           onClick={() => {
-                            console.log('Adding to cart:', {
-                              pharmacyId: pharmacy._id,
-                              pharmacyName: pharmacy.name,
-                              medicineId: item.medicineId._id,
-                              medicineName: item.medicineId.name,
-                              price: item.price,
-                            });
                             addToCart({
                               pharmacyId: pharmacy._id,
                               pharmacyName: pharmacy.name,

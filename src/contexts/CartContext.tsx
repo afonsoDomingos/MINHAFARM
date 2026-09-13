@@ -41,14 +41,12 @@ export function CartProvider({ children }: { children: ReactNode }) {
   }, [items]);
 
   const addToCart = (item: Omit<CartItem, 'quantity'>) => {
-    console.log('addToCart called with:', item);
     setItems((prevItems) => {
       const existingItem = prevItems.find(
         (i) => i.medicineId === item.medicineId && i.pharmacyId === item.pharmacyId
       );
 
       if (existingItem) {
-        console.log('Item exists, updating quantity');
         return prevItems.map((i) =>
           i.medicineId === item.medicineId && i.pharmacyId === item.pharmacyId
             ? { ...i, quantity: i.quantity + 1 }
@@ -56,7 +54,6 @@ export function CartProvider({ children }: { children: ReactNode }) {
         );
       }
 
-      console.log('Adding new item');
       return [...prevItems, { ...item, quantity: 1 }];
     });
   };
