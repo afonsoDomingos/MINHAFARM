@@ -41,7 +41,12 @@ function SearchContent() {
     try {
       const response = await fetch(`/api/medicines/search?q=${encodeURIComponent(searchQuery)}`);
       if (!response.ok) {
-        throw new Error('Erro ao buscar medicamentos');
+        const data = await response.json();
+        const errorMessage = data.error || 'Erro ao buscar medicamentos';
+        const errorDetails = data.details ? ` (${data.details})` : '';
+        setError(errorMessage + errorDetails);
+        console.error('Search error:', data);
+        return;
       }
       const data = await response.json();
       setResults(data);
