@@ -234,7 +234,7 @@ export default function HomePage() {
                 Ajude os seus clientes a encontrar os medicamentos disponíveis na sua farmácia e facilite o processo de atendimento
               </p>
               <Link
-                href="/pharmacy-register"
+                href="/register"
                 className="inline-block bg-white text-green-600 px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 transition-colors shadow-lg"
               >
                 Cadastrar Farmácia

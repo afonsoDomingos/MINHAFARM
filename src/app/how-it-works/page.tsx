@@ -247,7 +247,7 @@ export default function HowItWorksPage() {
               Buscar Medicamentos
             </a>
             <a
-              href="/pharmacy-register"
+              href="/register"
               className="inline-block bg-green-700 text-white px-8 py-4 rounded-lg font-semibold hover:bg-green-800 transition-colors"
             >
               Cadastrar Farmácia
