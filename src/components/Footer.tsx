@@ -6,9 +6,8 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
-            <div className="flex items-center space-x-2 mb-4">
+            <div className="flex items-center mb-4">
               <img src="/MinhaFarm.png" alt="MINHAFARM Logo" className="h-8 w-auto" />
-              <span className="text-xl font-bold text-gray-900">MINHAFARM</span>
             </div>
             <p className="text-gray-600 text-sm">
               Encontre medicamentos disponíveis nas farmácias cadastradas em Moçambique.
