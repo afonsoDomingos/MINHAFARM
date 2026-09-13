@@ -3,6 +3,7 @@
 import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
+import { symptoms } from '@/data/symptoms';
 
 interface SearchResult {
   _id: string;
@@ -25,6 +26,8 @@ function SearchContent() {
   const [results, setResults] = useState<SearchResult[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [filterType, setFilterType] = useState<'name' | 'symptom'>('name');
+  const [selectedSymptom, setSelectedSymptom] = useState('');
 
   useEffect(() => {
     if (query) {
@@ -50,17 +53,107 @@ function SearchContent() {
     }
   };
 
+  const handleSymptomSearch = (symptomId: string) => {
+    const symptom = symptoms.find((s) => s.id === symptomId);
+    if (symptom) {
+      const params = new URLSearchParams();
+      params.set('q', symptom.suggestedMedicines[0]);
+      params.set('filter', 'symptom');
+      window.location.href = `/search?${params.toString()}`;
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Resultados para "{query}"
+            Busca de Medicamentos
           </h1>
           <p className="text-gray-600">
-            {results.length} {results.length === 1 ? 'farmácia encontrada' : 'farmácias encontradas'}
+            {query ? `Resultados para "${query}"` : 'Encontre o medicamento que precisa'}
           </p>
         </div>
+
+        {/* Filter Type Selector */}
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-6">
+          <div className="flex items-center gap-4">
+            <span className="text-sm font-medium text-gray-700">Tipo de filtro:</span>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setFilterType('name')}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                  filterType === 'name'
+                    ? 'bg-green-600 text-white'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                Por Nome
+              </button>
+              <button
+                onClick={() => setFilterType('symptom')}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                  filterType === 'symptom'
+                    ? 'bg-green-600 text-white'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                Por Sintoma
+              </button>
+            </div>
+          </div>
+
+          {filterType === 'symptom' && (
+            <div className="mt-4">
+              <p className="text-sm text-gray-600 mb-3">Selecione o que está sentindo:</p>
+              <div className="flex flex-wrap gap-2">
+                {symptoms.map((symptom) => (
+                  <button
+                    key={symptom.id}
+                    onClick={() => handleSymptomSearch(symptom.id)}
+                    className="px-4 py-2 rounded-full text-sm font-medium bg-green-50 text-green-700 hover:bg-green-100 transition-colors"
+                  >
+                    {symptom.name}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {filterType === 'name' && (
+            <div className="mt-4">
+              <Link
+                href="/"
+                className="text-green-600 hover:text-green-700 font-medium"
+              >
+                Voltar à página inicial para buscar por nome
+              </Link>
+            </div>
+          )}
+        </div>
+
+        {/* Results Section */}
+        {query && (
+          <div className="mb-8">
+            <p className="text-gray-600">
+              {results.length} {results.length === 1 ? 'farmácia encontrada' : 'farmácias encontradas'}
+            </p>
+          </div>
+        )}
+
+        {!query && filterType === 'name' && (
+          <div className="text-center py-12">
+            <p className="text-gray-600 mb-4">
+              Selecione o tipo de filtro ou vá para a página inicial para buscar medicamentos
+            </p>
+            <Link
+              href="/"
+              className="text-green-600 hover:text-green-700 font-medium"
+            >
+              Voltar à página inicial
+            </Link>
+          </div>
+        )}
 
         {loading && (
           <div className="text-center py-12">
@@ -75,7 +168,7 @@ function SearchContent() {
           </div>
         )}
 
-        {!loading && !error && results.length === 0 && query && (
+        {!loading && !error && results.length === 0 && query && filterType === 'name' && (
           <div className="text-center py-12">
             <div className="text-gray-400 mb-4">
               <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
