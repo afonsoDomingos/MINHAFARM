@@ -23,6 +23,7 @@ export async function GET(request: NextRequest) {
       $or: [
         { name: { $regex: query, $options: 'i' } },
         { description: { $regex: query, $options: 'i' } },
+        { category: { $regex: query, $options: 'i' } },
       ],
       active: true,
     }).limit(20);
@@ -55,6 +56,7 @@ export async function GET(request: NextRequest) {
           _id: pm._id.toString(),
           medicineId: medicine._id.toString(),
           name: medicine.name,
+          category: medicine.category,
           pharmacy: {
             _id: pharmacy._id.toString(),
             name: pharmacy.name,
