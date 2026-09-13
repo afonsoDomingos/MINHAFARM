@@ -44,7 +44,7 @@ export default function MapPage() {
   const [pharmacies, setPharmacies] = useState<Pharmacy[]>([]);
   const [loading, setLoading] = useState(true);
   const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
-  const [filterRadius, setFilterRadius] = useState<number>(100);
+  const [filterRadius, setFilterRadius] = useState<number>(5);
   const [selectedPharmacy, setSelectedPharmacy] = useState<Pharmacy | null>(null);
   const [routeToPharmacy, setRouteToPharmacy] = useState<Pharmacy | null>(null);
   const [routeDistance, setRouteDistance] = useState<string>('');
@@ -60,7 +60,11 @@ export default function MapPage() {
 
   useEffect(() => {
     // Adjust zoom based on filter radius
-    if (filterRadius <= 5) setMapZoom(14);
+    if (filterRadius <= 1) setMapZoom(16);
+    else if (filterRadius <= 2) setMapZoom(15);
+    else if (filterRadius <= 3) setMapZoom(15);
+    else if (filterRadius <= 4) setMapZoom(14);
+    else if (filterRadius <= 5) setMapZoom(14);
     else if (filterRadius <= 10) setMapZoom(13);
     else if (filterRadius <= 25) setMapZoom(12);
     else if (filterRadius <= 50) setMapZoom(11);
@@ -199,6 +203,10 @@ export default function MapPage() {
                   onChange={(e) => setFilterRadius(Number(e.target.value))}
                   className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-green-500 focus:border-green-500"
                 >
+                  <option value={1}>1 km</option>
+                  <option value={2}>2 km</option>
+                  <option value={3}>3 km</option>
+                  <option value={4}>4 km</option>
                   <option value={5}>5 km</option>
                   <option value={10}>10 km</option>
                   <option value={25}>25 km</option>
