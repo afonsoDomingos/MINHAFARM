@@ -6,7 +6,7 @@ import Medicine from '../src/lib/models/Medicine';
 import PharmacyMedicine from '../src/lib/models/PharmacyMedicine';
 import Order from '../src/lib/models/Order';
 
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/minhafarm';
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/minhafarmdb';
 
 async function createAdmin() {
   try {
