@@ -12,7 +12,7 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: "ConectLife - Encontre Medicamentos em Moçambique",
-  description: "Plataforma digital que conecta pessoas que procuram medicamentos com farmácias cadastradas em Moçambique.",
+  description: "ConectLife: Encontrar o que precisa, quando precisa, onde precisa. Plataforma digital que conecta pessoas que procuram medicamentos com farmácias cadastradas em Moçambique.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

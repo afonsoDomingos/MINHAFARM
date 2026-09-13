@@ -10,7 +10,7 @@ export default function Footer() {
               <img src="/logominhafarm.png" alt="ConectLife Logo" className="h-14 w-auto" />
             </div>
             <p className="text-gray-600 text-sm">
-              Encontre medicamentos disponíveis nas farmácias cadastradas em Moçambique.
+              Encontrar o que precisa, quando precisa, onde precisa.
             </p>
           </div>
 

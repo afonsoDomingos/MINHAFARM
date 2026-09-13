@@ -33,10 +33,10 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 h-full flex items-center">
           <div className="text-center w-full">
             <h1 className="text-4xl md:text-6xl font-bold text-white mb-4 drop-shadow-2xl">
-              Encontre o seu medicamento perto de si
+              ConectLife
             </h1>
             <p className="text-xl text-green-100 mb-8 max-w-2xl mx-auto drop-shadow-lg">
-              Pesquise medicamentos disponíveis nas farmácias cadastradas em Moçambique
+              Encontrar o que precisa, quando precisa, onde precisa
             </p>
 
             {/* Search Bar */}
@@ -94,10 +94,10 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 h-full flex items-center">
           <div className="text-center w-full">
             <h1 className="text-3xl md:text-4xl font-bold text-white mb-4 drop-shadow-2xl">
-              Encontre o seu medicamento perto de si
+              ConectLife
             </h1>
             <p className="text-lg text-green-100 mb-8 max-w-2xl mx-auto drop-shadow-lg">
-              Pesquise medicamentos disponíveis nas farmácias cadastradas em Moçambique
+              Encontrar o que precisa, quando precisa, onde precisa
             </p>
 
             {/* Search Bar */}
