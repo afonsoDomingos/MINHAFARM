@@ -6,16 +6,18 @@ import Link from 'next/link';
 
 export default function RegisterPage() {
   const router = useRouter();
-  const [accountType, setAccountType] = useState<'user' | 'pharmacy'>('user');
+  const [step, setStep] = useState(1);
+  const [accountType, setAccountType] = useState<'user' | 'pharmacy' | ''>('');
   const [formData, setFormData] = useState({
     // User fields
     name: '',
+    // Pharmacy fields
+    pharmacyName: '',
+    // Common fields
     email: '',
     password: '',
     confirmPassword: '',
     phone: '',
-    // Pharmacy fields
-    pharmacyName: '',
     address: '',
     neighborhood: '',
     city: 'Maputo',
@@ -28,17 +30,80 @@ export default function RegisterPage() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  const validateStep = () => {
+    setError('');
+
+    if (step === 1 && !accountType) {
+      setError('Selecione o tipo de conta');
+      return false;
+    }
+
+    if (step === 2) {
+      if (!formData.email) {
+        setError('Email é obrigatório');
+        return false;
+      }
+      if (!formData.password) {
+        setError('Password é obrigatória');
+        return false;
+      }
+      if (formData.password.length < 6) {
+        setError('A password deve ter pelo menos 6 caracteres');
+        return false;
+      }
+      if (formData.password !== formData.confirmPassword) {
+        setError('As passwords não coincidem');
+        return false;
+      }
+      if (!formData.phone) {
+        setError('Telefone é obrigatório');
+        return false;
+      }
+    }
+
+    if (step === 3) {
+      if (accountType === 'user' && !formData.name) {
+        setError('Nome é obrigatório');
+        return false;
+      }
+      if (accountType === 'pharmacy') {
+        if (!formData.pharmacyName) {
+          setError('Nome da farmácia é obrigatório');
+          return false;
+        }
+        if (!formData.address) {
+          setError('Endereço é obrigatório');
+          return false;
+        }
+        if (!formData.neighborhood) {
+          setError('Bairro é obrigatório');
+          return false;
+        }
+        if (!formData.openingHours) {
+          setError('Horário de funcionamento é obrigatório');
+          return false;
+        }
+      }
+    }
+
+    return true;
+  };
+
+  const handleNext = () => {
+    if (validateStep()) {
+      setStep(step + 1);
+    }
+  };
+
+  const handleBack = () => {
+    setStep(step - 1);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
 
-    if (formData.password !== formData.confirmPassword) {
-      setError('As passwords não coincidem');
-      return;
-    }
-
-    if (formData.password.length < 6) {
-      setError('A password deve ter pelo menos 6 caracteres');
+    if (!validateStep()) {
       return;
     }
 
@@ -109,6 +174,27 @@ export default function RegisterPage() {
           </p>
         </div>
 
+        {/* Progress Steps */}
+        <div className="flex items-center justify-center space-x-4 mb-6">
+          <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
+            step >= 1 ? 'bg-green-600 text-white' : 'bg-gray-200 text-gray-600'
+          }`}>
+            1
+          </div>
+          <div className={`w-16 h-1 ${step >= 2 ? 'bg-green-600' : 'bg-gray-200'}`}></div>
+          <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
+            step >= 2 ? 'bg-green-600 text-white' : 'bg-gray-200 text-gray-600'
+          }`}>
+            2
+          </div>
+          <div className={`w-16 h-1 ${step >= 3 ? 'bg-green-600' : 'bg-gray-200'}`}></div>
+          <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
+            step >= 3 ? 'bg-green-600 text-white' : 'bg-gray-200 text-gray-600'
+          }`}>
+            3
+          </div>
+        </div>
+
         <form onSubmit={handleSubmit} className="space-y-3">
           {error && (
             <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
@@ -116,230 +202,291 @@ export default function RegisterPage() {
             </div>
           )}
 
-          {/* Account Type Selection */}
-          <div className="bg-white p-4 rounded-lg border border-gray-200">
-            <label className="block text-sm font-medium text-gray-700 mb-3">
-              Tipo de Conta *
-            </label>
-            <div className="flex gap-4">
-              <label className="flex items-center cursor-pointer">
-                <input
-                  type="radio"
-                  name="accountType"
-                  value="user"
-                  checked={accountType === 'user'}
-                  onChange={(e) => setAccountType(e.target.value as 'user' | 'pharmacy')}
-                  className="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300"
-                />
-                <span className="ml-2 text-sm text-gray-900">Cliente</span>
-              </label>
-              <label className="flex items-center cursor-pointer">
-                <input
-                  type="radio"
-                  name="accountType"
-                  value="pharmacy"
-                  checked={accountType === 'pharmacy'}
-                  onChange={(e) => setAccountType(e.target.value as 'user' | 'pharmacy')}
-                  className="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300"
-                />
-                <span className="ml-2 text-sm text-gray-900">Farmácia</span>
-              </label>
-            </div>
-          </div>
-
-          {/* Common Fields */}
-          <div className="space-y-3">
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                Email *
-              </label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                required
-                value={formData.email}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-green-500 focus:border-green-500"
-                placeholder="seu@email.com"
-              />
-            </div>
-
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-                Password *
-              </label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                required
-                value={formData.password}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-green-500 focus:border-green-500"
-                placeholder="••••••••"
-              />
-            </div>
-
-            <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-1">
-                Confirmar Password *
-              </label>
-              <input
-                id="confirmPassword"
-                name="confirmPassword"
-                type="password"
-                required
-                value={formData.confirmPassword}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-green-500 focus:border-green-500"
-                placeholder="••••••••"
-              />
-            </div>
-
-            <div>
-              <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
-                Telefone *
-              </label>
-              <input
-                id="phone"
-                name="phone"
-                type="tel"
-                required
-                value={formData.phone}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-green-500 focus:border-green-500"
-                placeholder="+258 84 123 4567"
-              />
-            </div>
-          </div>
-
-          {/* User-specific Fields */}
-          {accountType === 'user' && (
-            <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-                Nome Completo *
-              </label>
-              <input
-                id="name"
-                name="name"
-                type="text"
-                required
-                value={formData.name}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-green-500 focus:border-green-500"
-                placeholder="Seu nome"
-              />
-            </div>
-          )}
-
-          {/* Pharmacy-specific Fields */}
-          {accountType === 'pharmacy' && (
-            <div className="space-y-3">
-              <div>
-                <label htmlFor="pharmacyName" className="block text-sm font-medium text-gray-700 mb-1">
-                  Nome da Farmácia *
+          {/* Step 1: Account Type */}
+          {step === 1 && (
+            <div className="bg-white p-6 rounded-lg border border-gray-200">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                Passo 1 de 3: Tipo de Conta
+              </h3>
+              <p className="text-sm text-gray-600 mb-4">
+                Selecione o tipo de conta que deseja criar
+              </p>
+              <div className="space-y-3">
+                <label className="flex items-center p-4 border border-gray-200 rounded-lg cursor-pointer hover:border-green-300 transition-colors">
+                  <input
+                    type="radio"
+                    name="accountType"
+                    value="user"
+                    checked={accountType === 'user'}
+                    onChange={(e) => setAccountType(e.target.value as 'user' | 'pharmacy')}
+                    className="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300"
+                  />
+                  <div className="ml-3">
+                    <span className="block text-sm font-medium text-gray-900">
+                      Cliente
+                    </span>
+                    <span className="block text-sm text-gray-500">
+                      Encontrar medicamentos e fazer pedidos
+                    </span>
+                  </div>
                 </label>
-                <input
-                  id="pharmacyName"
-                  name="pharmacyName"
-                  type="text"
-                  required
-                  value={formData.pharmacyName}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-green-500 focus:border-green-500"
-                  placeholder="Farmácia Central"
-                />
-              </div>
-
-              <div>
-                <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">
-                  Endereço *
+                <label className="flex items-center p-4 border border-gray-200 rounded-lg cursor-pointer hover:border-green-300 transition-colors">
+                  <input
+                    type="radio"
+                    name="accountType"
+                    value="pharmacy"
+                    checked={accountType === 'pharmacy'}
+                    onChange={(e) => setAccountType(e.target.value as 'user' | 'pharmacy')}
+                    className="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300"
+                  />
+                  <div className="ml-3">
+                    <span className="block text-sm font-medium text-gray-900">
+                      Farmácia
+                    </span>
+                    <span className="block text-sm text-gray-500">
+                      Cadastrar medicamentos e gerir pedidos
+                    </span>
+                  </div>
                 </label>
-                <input
-                  id="address"
-                  name="address"
-                  type="text"
-                  required
-                  value={formData.address}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-green-500 focus:border-green-500"
-                  placeholder="Av. Julius Nyerere, 123"
-                />
-              </div>
-
-              <div>
-                <label htmlFor="neighborhood" className="block text-sm font-medium text-gray-700 mb-1">
-                  Bairro *
-                </label>
-                <input
-                  id="neighborhood"
-                  name="neighborhood"
-                  type="text"
-                  required
-                  value={formData.neighborhood}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-green-500 focus:border-green-500"
-                  placeholder="Sommerschield"
-                />
-              </div>
-
-              <div>
-                <label htmlFor="city" className="block text-sm font-medium text-gray-700 mb-1">
-                  Cidade *
-                </label>
-                <select
-                  id="city"
-                  name="city"
-                  required
-                  value={formData.city}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-green-500 focus:border-green-500"
-                >
-                  <option value="Maputo">Maputo</option>
-                  <option value="Matola">Matola</option>
-                  <option value="Beira">Beira</option>
-                  <option value="Nampula">Nampula</option>
-                  <option value="Quelimane">Quelimane</option>
-                  <option value="Tete">Tete</option>
-                  <option value="Chimoio">Chimoio</option>
-                  <option value="Pemba">Pemba</option>
-                  <option value="Xai-Xai">Xai-Xai</option>
-                </select>
-              </div>
-
-              <div>
-                <label htmlFor="openingHours" className="block text-sm font-medium text-gray-700 mb-1">
-                  Horário de Funcionamento *
-                </label>
-                <input
-                  id="openingHours"
-                  name="openingHours"
-                  type="text"
-                  required
-                  value={formData.openingHours}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-green-500 focus:border-green-500"
-                  placeholder="Seg-Sex: 8h-20h, Sáb: 9h-18h"
-                />
               </div>
             </div>
           )}
 
-          <div>
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full py-2 px-4 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {loading ? 'A criar conta...' : 'Criar Conta'}
-            </button>
+          {/* Step 2: Common Fields */}
+          {step === 2 && (
+            <div className="bg-white p-6 rounded-lg border border-gray-200">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                Passo 2 de 3: Informações de Acesso
+              </h3>
+              <p className="text-sm text-gray-600 mb-4">
+                Preencha suas informações de acesso
+              </p>
+              <div className="space-y-3">
+                <div>
+                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                    Email *
+                  </label>
+                  <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    required
+                    value={formData.email}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-green-500 focus:border-green-500"
+                    placeholder="seu@email.com"
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+                    Password *
+                  </label>
+                  <input
+                    id="password"
+                    name="password"
+                    type="password"
+                    required
+                    value={formData.password}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-green-500 focus:border-green-500"
+                    placeholder="•••••••••"
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-1">
+                    Confirmar Password *
+                  </label>
+                  <input
+                    id="confirmPassword"
+                    name="confirmPassword"
+                    type="password"
+                    required
+                    value={formData.confirmPassword}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-green-500 focus:border-green-500"
+                    placeholder="•••••••••"
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
+                    Telefone *
+                  </label>
+                  <input
+                    id="phone"
+                    name="phone"
+                    type="tel"
+                    required
+                    value={formData.phone}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-green-500 focus:border-green-500"
+                    placeholder="+258 84 123 4567"
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Step 3: Specific Fields */}
+          {step === 3 && (
+            <div className="bg-white p-6 rounded-lg border border-gray-200">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                Passo 3 de 3: {accountType === 'user' ? 'Informações Pessoais' : 'Informações da Farmácia'}
+              </h3>
+              <p className="text-sm text-gray-600 mb-4">
+                {accountType === 'user' 
+                  ? 'Preencha suas informações pessoais'
+                  : 'Preencha as informações da sua farmácia'
+                }
+              </p>
+              <div className="space-y-3">
+                {accountType === 'user' ? (
+                  <div>
+                    <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+                      Nome Completo *
+                    </label>
+                    <input
+                      id="name"
+                      name="name"
+                      type="text"
+                      required
+                      value={formData.name}
+                      onChange={handleChange}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-green-500 focus:border-green-500"
+                      placeholder="Seu nome"
+                    />
+                  </div>
+                ) : (
+                  <>
+                    <div>
+                      <label htmlFor="pharmacyName" className="block text-sm font-medium text-gray-700 mb-1">
+                        Nome da Farmácia *
+                      </label>
+                      <input
+                        id="pharmacyName"
+                        name="pharmacyName"
+                        type="text"
+                        required
+                        value={formData.pharmacyName}
+                        onChange={handleChange}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-green-500 focus:border-green-500"
+                        placeholder="Farmácia Central"
+                      />
+                    </div>
+
+                    <div>
+                      <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">
+                        Endereço *
+                      </label>
+                      <input
+                        id="address"
+                        name="address"
+                        type="text"
+                        required
+                        value={formData.address}
+                        onChange={handleChange}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-green-500 focus:border-green-500"
+                        placeholder="Av. Julius Nyerere, 123"
+                      />
+                    </div>
+
+                    <div>
+                      <label htmlFor="neighborhood" className="block text-sm font-medium text-gray-700 mb-1">
+                        Bairro *
+                      </label>
+                      <input
+                        id="neighborhood"
+                        name="neighborhood"
+                        type="text"
+                        required
+                        value={formData.neighborhood}
+                        onChange={handleChange}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-green-500 focus:border-green-500"
+                        placeholder="Sommerschield"
+                      />
+                    </div>
+
+                    <div>
+                      <label htmlFor="city" className="block text-sm font-medium text-gray-700 mb-1">
+                        Cidade *
+                      </label>
+                      <select
+                        id="city"
+                        name="city"
+                        required
+                        value={formData.city}
+                        onChange={handleChange}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-green-500 focus:border-green-500"
+                      >
+                        <option value="Maputo">Maputo</option>
+                        <option value="Matola">Matola</option>
+                        <option value="Beira">Beira</option>
+                        <option value="Nampula">Nampula</option>
+                        <option value="Quelimane">Quelimane</option>
+                        <option value="Tete">Tete</option>
+                        <option value="Chimoio">Chimoio</option>
+                        <option value="Pemba">Pemba</option>
+                        <option value="Xai-Xai">Xai-Xai</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label htmlFor="openingHours" className="block text-sm font-medium text-gray-700 mb-1">
+                        Horário de Funcionamento *
+                      </label>
+                      <input
+                        id="openingHours"
+                        name="openingHours"
+                        type="text"
+                        required
+                        value={formData.openingHours}
+                        onChange={handleChange}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-green-500 focus:border-green-500"
+                        placeholder="Seg-Sex: 8h-20h, Sáb: 9h-18h"
+                      />
+                    </div>
+                  </>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Navigation Buttons */}
+          <div className="flex gap-3">
+            {step > 1 && (
+              <button
+                type="button"
+                onClick={handleBack}
+                className="flex-1 py-2 px-4 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+              >
+                Voltar
+              </button>
+            )}
+            {step < 3 ? (
+              <button
+                type="button"
+                onClick={handleNext}
+                className="flex-1 py-2 px-4 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+              >
+                Próximo
+              </button>
+            ) : (
+              <button
+                type="submit"
+                disabled={loading}
+                className="flex-1 py-2 px-4 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {loading ? 'A criar conta...' : 'Criar Conta'}
+              </button>
+            )}
           </div>
 
           <div className="text-center">
             <p className="text-sm text-gray-600">
               Já tem conta?{' '}
-              <Link href={accountType === 'user' ? '/login' : '/pharmacy-login'} className="font-medium text-green-600 hover:text-green-500">
+              <Link href={accountType === 'pharmacy' ? '/pharmacy-login' : '/login'} className="font-medium text-green-600 hover:text-green-500">
                 Entrar
               </Link>
             </p>
