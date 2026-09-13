@@ -74,9 +74,20 @@ export default function Footer() {
         </div>
 
         <div className="mt-8 pt-8 border-t border-gray-200">
-          <p className="text-center text-gray-600 text-sm">
+          <p className="text-center text-gray-600 text-sm mb-4">
             © {new Date().getFullYear()} ConectLife. Todos os direitos reservados.
           </p>
+          <div className="flex items-center justify-center space-x-2">
+            <span className="text-gray-500 text-sm">Powered by</span>
+            <a 
+              href="https://www.wehosthere.com/" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="flex items-center"
+            >
+              <img src="/wehosthere logo.png" alt="Wehosthere" className="h-6 w-auto" />
+            </a>
+          </div>
         </div>
       </div>
     </footer>
