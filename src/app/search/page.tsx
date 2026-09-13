@@ -4,9 +4,11 @@ import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { symptoms } from '@/data/symptoms';
+import { useCart } from '@/contexts/CartContext';
 
 interface SearchResult {
   _id: string;
+  medicineId: string;
   name: string;
   pharmacy: {
     _id: string;
@@ -23,11 +25,14 @@ interface SearchResult {
 function SearchContent() {
   const searchParams = useSearchParams();
   const query = searchParams.get('q') || '';
+  const { addToCart } = useCart();
   const [results, setResults] = useState<SearchResult[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [filterType, setFilterType] = useState<'name' | 'symptom'>('name');
   const [selectedSymptom, setSelectedSymptom] = useState('');
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
 
   useEffect(() => {
     if (query) {
@@ -66,6 +71,19 @@ function SearchContent() {
       params.set('filter', 'symptom');
       window.location.href = `/search?${params.toString()}`;
     }
+  };
+
+  const handleAddToCart = (result: SearchResult) => {
+    addToCart({
+      pharmacyId: result.pharmacy._id,
+      pharmacyName: result.pharmacy.name,
+      medicineId: result.medicineId || result._id,
+      medicineName: result.name,
+      price: result.price,
+    });
+    setToastMessage(`${result.name} adicionado ao carrinho`);
+    setShowToast(true);
+    setTimeout(() => setShowToast(false), 3000);
   };
 
   return (
@@ -259,18 +277,38 @@ function SearchContent() {
                         <p className="text-sm text-gray-600">
                           Quantidade: {result.quantity}
                         </p>
-                        <Link
-                          href={`/pharmacy/${result.pharmacy._id}`}
-                          className="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
-                        >
-                          Ver Farmácia
-                        </Link>
+                        <div className="flex gap-2">
+                          <Link
+                            href={`/pharmacy/${result.pharmacy._id}`}
+                            className="inline-flex items-center px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
+                          >
+                            Ver Farmácia
+                          </Link>
+                          <button
+                            onClick={() => handleAddToCart(result)}
+                            className="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                          >
+                            Adicionar ao Pedido
+                          </button>
+                        </div>
                       </>
                     )}
                   </div>
                 </div>
               </div>
             ))}
+          </div>
+        )}
+
+        {/* Toast Notification */}
+        {showToast && (
+          <div className="fixed bottom-4 right-4 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-pulse">
+            <div className="flex items-center gap-2">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+              <span>{toastMessage}</span>
+            </div>
           </div>
         )}
       </div>

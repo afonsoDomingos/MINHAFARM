@@ -58,6 +58,7 @@ export async function GET(request: NextRequest) {
         const medicine = pm.medicineId as any;
         return {
           _id: pm._id.toString(),
+          medicineId: medicine._id.toString(),
           name: medicine.name,
           pharmacy: {
             _id: pharmacy._id.toString(),
