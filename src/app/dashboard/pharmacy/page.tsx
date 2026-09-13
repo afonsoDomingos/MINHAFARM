@@ -2,14 +2,19 @@
 
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import PharmacyDashboardNav from '@/components/PharmacyDashboardNav';
-import { Fragment } from 'react';
 
 export default function PharmacyDashboard() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [pharmacy, setPharmacy] = useState<any>(null);
+  const [stats, setStats] = useState({
+    totalMedicines: 0,
+    pendingOrders: 0,
+    completedOrders: 0,
+  });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -19,6 +24,7 @@ export default function PharmacyDashboard() {
       router.push('/');
     } else if (status === 'authenticated') {
       fetchPharmacyData();
+      fetchStats();
     }
   }, [status, session, router]);
 
@@ -33,6 +39,18 @@ export default function PharmacyDashboard() {
       console.error('Error fetching pharmacy data:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchStats = async () => {
+    try {
+      const response = await fetch('/api/pharmacies/my-pharmacy/stats');
+      if (response.ok) {
+        const data = await response.json();
+        setStats(data);
+      }
+    } catch (error) {
+      console.error('Error fetching stats:', error);
     }
   };
 
@@ -83,19 +101,19 @@ export default function PharmacyDashboard() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">Medicamentos</h3>
-                <p className="text-3xl font-bold text-green-600">0</p>
+                <p className="text-3xl font-bold text-green-600">{stats.totalMedicines}</p>
                 <p className="text-sm text-gray-600 mt-1">Cadastrados</p>
               </div>
 
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">Pedidos</h3>
-                <p className="text-3xl font-bold text-green-600">0</p>
+                <p className="text-3xl font-bold text-green-600">{stats.pendingOrders}</p>
                 <p className="text-sm text-gray-600 mt-1">Pendentes</p>
               </div>
 
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">Concluídos</h3>
-                <p className="text-3xl font-bold text-green-600">0</p>
+                <p className="text-3xl font-bold text-green-600">{stats.completedOrders}</p>
                 <p className="text-sm text-gray-600 mt-1">Este mês</p>
               </div>
             </div>
@@ -104,15 +122,24 @@ export default function PharmacyDashboard() {
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">Ações Rápidas</h3>
                 <div className="space-y-3">
-                  <button className="w-full text-left px-4 py-3 bg-green-50 text-green-700 rounded-lg hover:bg-green-100 transition-colors">
+                  <Link
+                    href="/dashboard/pharmacy/medicines"
+                    className="block w-full text-left px-4 py-3 bg-green-50 text-green-700 rounded-lg hover:bg-green-100 transition-colors"
+                  >
                     + Adicionar Medicamento
-                  </button>
-                  <button className="w-full text-left px-4 py-3 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors">
+                  </Link>
+                  <Link
+                    href="/dashboard/pharmacy/orders"
+                    className="block w-full text-left px-4 py-3 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors"
+                  >
                     📋 Ver Pedidos
-                  </button>
-                  <button className="w-full text-left px-4 py-3 bg-gray-50 text-gray-700 rounded-lg hover:bg-gray-100 transition-colors">
+                  </Link>
+                  <Link
+                    href="/dashboard/pharmacy/settings"
+                    className="block w-full text-left px-4 py-3 bg-gray-50 text-gray-700 rounded-lg hover:bg-gray-100 transition-colors"
+                  >
                     ⚙️ Editar Informações
-                  </button>
+                  </Link>
                 </div>
               </div>
 
