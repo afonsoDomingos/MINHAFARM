@@ -34,7 +34,19 @@ export async function GET(request: NextRequest) {
       .populate('userId', 'name phone')
       .sort({ createdAt: -1 });
 
-    return NextResponse.json(orders);
+    // For guest orders, populate guest information
+    const ordersWithGuestInfo = orders.map(order => {
+      const orderObj = order.toObject();
+      if (orderObj.isGuestOrder) {
+        orderObj.user = {
+          name: orderObj.guestName,
+          phone: orderObj.guestPhone,
+        };
+      }
+      return orderObj;
+    });
+
+    return NextResponse.json(ordersWithGuestInfo);
   } catch (error) {
     console.error('Error fetching orders:', error);
     return NextResponse.json(

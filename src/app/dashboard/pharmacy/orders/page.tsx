@@ -12,7 +12,7 @@ interface OrderItem {
 
 interface Order {
   _id: string;
-  userId: string;
+  userId?: string;
   items: OrderItem[];
   totalAmount: number;
   status: 'pending' | 'received' | 'analyzing' | 'confirmed' | 'ready' | 'completed' | 'rejected';
@@ -21,6 +21,10 @@ interface Order {
   deliveryAddress?: string;
   notes?: string;
   createdAt: string;
+  isGuestOrder?: boolean;
+  guestName?: string;
+  guestPhone?: string;
+  guestEmail?: string;
   user?: {
     name: string;
     phone?: string;
@@ -219,6 +223,22 @@ export default function PharmacyOrdersPage() {
                         <p className="text-sm text-gray-600">
                           <span className="font-medium">Entrega:</span> {order.deliveryAddress}
                         </p>
+                      </div>
+                    )}
+
+                    {order.isGuestOrder && (
+                      <div className="mt-3 p-3 bg-yellow-50 rounded-lg">
+                        <p className="text-sm text-gray-600">
+                          <span className="font-medium">Cliente Convidado:</span> {order.guestName}
+                        </p>
+                        <p className="text-sm text-gray-600">
+                          <span className="font-medium">Telefone:</span> {order.guestPhone}
+                        </p>
+                        {order.guestEmail && (
+                          <p className="text-sm text-gray-600">
+                            <span className="font-medium">Email:</span> {order.guestEmail}
+                          </p>
+                        )}
                       </div>
                     )}
 

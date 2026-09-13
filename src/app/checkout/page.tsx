@@ -17,6 +17,9 @@ export default function CheckoutPage() {
   const [deliveryAddress, setDeliveryAddress] = useState('');
   const [notes, setNotes] = useState('');
   const [mounted, setMounted] = useState(false);
+  const [guestName, setGuestName] = useState('');
+  const [guestPhone, setGuestPhone] = useState('');
+  const [guestEmail, setGuestEmail] = useState('');
 
   const pharmacyGroupedItems = getPharmacyGroupedItems();
   const totalWithDelivery = getCartTotal() + (deliveryMethod === 'delivery' ? DELIVERY_FEE : 0);
@@ -43,9 +46,12 @@ export default function CheckoutPage() {
     e.preventDefault();
     setError('');
 
+    // If not logged in, require guest information
     if (!session) {
-      router.push('/login?redirect=/checkout');
-      return;
+      if (!guestName.trim() || !guestPhone.trim()) {
+        setError('Por favor, forneça seu nome e telefone');
+        return;
+      }
     }
 
     if (deliveryMethod === 'delivery' && !deliveryAddress.trim()) {
@@ -82,6 +88,9 @@ export default function CheckoutPage() {
               deliveryMethod,
               deliveryAddress: deliveryMethod === 'delivery' ? deliveryAddress : undefined,
               notes,
+              guestName: !session ? guestName : undefined,
+              guestPhone: !session ? guestPhone : undefined,
+              guestEmail: !session ? guestEmail : undefined,
             }),
           });
         }
@@ -113,14 +122,6 @@ export default function CheckoutPage() {
           <p className="text-gray-600">
             Revise os itens e escolha o método de entrega
           </p>
-          {!session && (
-            <div className="mt-4 bg-yellow-50 border border-yellow-200 text-yellow-800 px-4 py-3 rounded-lg">
-              <p className="font-medium">Faça login para finalizar o pedido</p>
-              <p className="text-sm mt-1">
-                Você precisa estar logado para concluir o pedido. Seus itens estão salvos no carrinho.
-              </p>
-            </div>
-          )}
         </div>
 
         {error && (
@@ -130,6 +131,58 @@ export default function CheckoutPage() {
         )}
 
         <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Guest Information */}
+          {!session && (
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+              <h2 className="text-xl font-semibold text-gray-900 mb-4">
+                Suas Informações
+              </h2>
+              <div className="space-y-4">
+                <div>
+                  <label htmlFor="guestName" className="block text-sm font-medium text-gray-700 mb-1">
+                    Nome Completo *
+                  </label>
+                  <input
+                    id="guestName"
+                    type="text"
+                    required
+                    value={guestName}
+                    onChange={(e) => setGuestName(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-green-500 focus:border-green-500"
+                    placeholder="Seu nome completo"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="guestPhone" className="block text-sm font-medium text-gray-700 mb-1">
+                    Telefone *
+                  </label>
+                  <input
+                    id="guestPhone"
+                    type="tel"
+                    required
+                    value={guestPhone}
+                    onChange={(e) => setGuestPhone(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-green-500 focus:border-green-500"
+                    placeholder="+258 84 123 4567"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="guestEmail" className="block text-sm font-medium text-gray-700 mb-1">
+                    Email (Opcional)
+                  </label>
+                  <input
+                    id="guestEmail"
+                    type="email"
+                    value={guestEmail}
+                    onChange={(e) => setGuestEmail(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-green-500 focus:border-green-500"
+                    placeholder="seu@email.com"
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Order Summary */}
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
             <h2 className="text-xl font-semibold text-gray-900 mb-4">
@@ -270,23 +323,13 @@ export default function CheckoutPage() {
             >
               Voltar
             </button>
-            {!session ? (
-              <button
-                type="button"
-                onClick={() => router.push('/login?redirect=/checkout')}
-                className="flex-1 py-3 px-4 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium"
-              >
-                Fazer Login
-              </button>
-            ) : (
-              <button
-                type="submit"
-                disabled={loading}
-                className="flex-1 py-3 px-4 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {loading ? 'A processar...' : 'Confirmar Pedido'}
-              </button>
-            )}
+            <button
+              type="submit"
+              disabled={loading}
+              className="flex-1 py-3 px-4 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {loading ? 'A processar...' : 'Confirmar Pedido'}
+            </button>
           </div>
         </form>
       </div>

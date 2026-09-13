@@ -8,7 +8,7 @@ export interface IOrderItem {
 }
 
 export interface IOrder extends Document {
-  userId: mongoose.Types.ObjectId;
+  userId?: mongoose.Types.ObjectId;
   pharmacyId: mongoose.Types.ObjectId;
   items: IOrderItem[];
   totalAmount: number;
@@ -17,6 +17,10 @@ export interface IOrder extends Document {
   deliveryMethod: 'pickup' | 'delivery';
   deliveryAddress?: string;
   notes?: string;
+  guestName?: string;
+  guestPhone?: string;
+  guestEmail?: string;
+  isGuestOrder: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -48,7 +52,6 @@ const OrderSchema: Schema = new Schema(
     userId: {
       type: Schema.Types.ObjectId,
       ref: 'User',
-      required: true,
     },
     pharmacyId: {
       type: Schema.Types.ObjectId,
@@ -82,6 +85,19 @@ const OrderSchema: Schema = new Schema(
     },
     notes: {
       type: String,
+    },
+    guestName: {
+      type: String,
+    },
+    guestPhone: {
+      type: String,
+    },
+    guestEmail: {
+      type: String,
+    },
+    isGuestOrder: {
+      type: Boolean,
+      default: false,
     },
   },
   {

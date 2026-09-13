@@ -8,22 +8,24 @@ import PharmacyMedicine from '@/lib/models/PharmacyMedicine';
 export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
-
-    if (!session || !session.user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
-
     const body = await request.json();
-    const { pharmacyId, items, deliveryMethod, deliveryAddress, notes } = body;
+    const { pharmacyId, items, deliveryMethod, deliveryAddress, notes, guestName, guestPhone, guestEmail } = body;
 
     if (!pharmacyId || !items || !Array.isArray(items) || items.length === 0) {
       return NextResponse.json(
         { error: 'Missing required fields' },
         { status: 400 }
       );
+    }
+
+    // If not logged in, require guest information
+    if (!session || !session.user) {
+      if (!guestName || !guestPhone) {
+        return NextResponse.json(
+          { error: 'Guest orders require name and phone' },
+          { status: 400 }
+        );
+      }
     }
 
     await connectDB();
@@ -65,7 +67,7 @@ export async function POST(request: NextRequest) {
 
     // Create order
     const order = await Order.create({
-      userId: (session.user as any).id,
+      userId: session ? (session.user as any).id : undefined,
       pharmacyId,
       items: orderItems,
       totalAmount,
@@ -73,6 +75,10 @@ export async function POST(request: NextRequest) {
       deliveryMethod: deliveryMethod || 'pickup',
       deliveryAddress,
       notes,
+      guestName: !session ? guestName : undefined,
+      guestPhone: !session ? guestPhone : undefined,
+      guestEmail: !session ? guestEmail : undefined,
+      isGuestOrder: !session,
     });
 
     const populatedOrder = await Order.findById(order._id)
