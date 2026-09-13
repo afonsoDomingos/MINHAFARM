@@ -137,7 +137,10 @@ export default function RegisterPage() {
         const data = await response.json();
 
         if (!response.ok) {
-          setError(data.error || 'Erro ao criar conta');
+          const errorMessage = data.error || 'Erro ao criar conta';
+          const errorDetails = data.details ? ` (${data.details})` : '';
+          setError(errorMessage + errorDetails);
+          console.error('Registration error:', data);
           return;
         }
 
