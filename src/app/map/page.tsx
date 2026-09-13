@@ -24,10 +24,7 @@ const Popup = dynamic(
   { ssr: false }
 );
 
-const Polyline = dynamic(
-  () => import('react-leaflet').then((mod) => mod.Polyline),
-  { ssr: false }
-);
+
 
 interface Pharmacy {
   _id: string;
@@ -59,8 +56,6 @@ export default function MapPage() {
   const [mapZoom, setMapZoom] = useState<number>(12);
   const [detectingLocation, setDetectingLocation] = useState(false);
   const [userAddress, setUserAddress] = useState<string>('');
-  const [routePath, setRoutePath] = useState<[number, number][]>([]);
-  const [calculatingRoute, setCalculatingRoute] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
 
   useEffect(() => {
@@ -232,39 +227,8 @@ export default function MapPage() {
     window.open(googleMapsUrl, '_blank');
   };
 
-  const calculateRouteOnMap = async (pharmacy: Pharmacy) => {
-    if (!userLocation || !pharmacy.location) return;
-
-    setCalculatingRoute(true);
-
-    try {
-      // Use OSRM (Open Source Routing Machine) - free, no API key needed
-      const response = await fetch(
-        `https://router.project-osrm.org/route/v1/driving/${userLocation[1]},${userLocation[0]};${pharmacy.location.coordinates[0]},${pharmacy.location.coordinates[1]}?overview=full&geometries=geojson`
-      );
-
-      if (response.ok) {
-        const data = await response.json();
-        if (data.routes && data.routes[0] && data.routes[0].geometry) {
-          const coordinates = data.routes[0].geometry.coordinates.map((coord: number[]) => [coord[1], coord[0]]);
-          setRoutePath(coordinates);
-        }
-      } else {
-        console.error('OSRM route calculation failed:', response.statusText);
-      }
-    } catch (error) {
-      console.error('Error calculating route:', error);
-    } finally {
-      setCalculatingRoute(false);
-    }
-  };
-
   const handleSelectPharmacy = (pharmacy: Pharmacy) => {
     setSelectedPharmacy(pharmacy);
-    // Calculate route on map when pharmacy is selected
-    if (userLocation && pharmacy.location) {
-      calculateRouteOnMap(pharmacy);
-    }
   };
 
   const scrollToTop = () => {
@@ -404,15 +368,6 @@ export default function MapPage() {
                         </div>
                       </Popup>
                     </Marker>
-                  )}
-
-                  {routePath.length > 0 && (
-                    <Polyline
-                      positions={routePath}
-                      color="#3b82f6"
-                      weight={5}
-                      opacity={0.7}
-                    />
                   )}
 
                   {filteredPharmacies.map((pharmacy) => {
